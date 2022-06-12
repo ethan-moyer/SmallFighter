@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7a58a6bd2aded428f23737e7cedd00, type: 3}
+  m_Name: jB
+  m_EditorClassIdentifier: 
+  actionName: jB
+  alwaysCancelable: 0
+  airOkay: 1
+  stopOnLanding: 1
+  numberOfFrames: 12
+  animationName: jB
+  bufferLimit: 15
+  damage: 6
+  knockdown: 0
+  type: 2
+  hitAnim: 0
+  hitAdv: 16
+  blockAdv: 2
+  pushback: 0.1
+  validMotions:
+  - inputs:
+    - 4b
+  - inputs:
+    - 5b
+  - inputs:
+    - 6b
+  hurtboxes:
+  - startEndFrames: {x: 1, y: 12}
+    useBaseCollider: 1
+    offset: {x: 0, y: 0}
+    size: {x: 0, y: 0}
+  - startEndFrames: {x: 7, y: 12}
+    useBaseCollider: 0
+    offset: {x: 0.4, y: -0.99}
+    size: {x: 1.58, y: 0.67}
+  hitboxes:
+  - startEndFrames: {x: 7, y: 12}
+    offset: {x: 0.44, y: -0.99}
+    size: {x: 1.43, y: 0.56}
+  movements:
+  - frame: 1
+    movementType: 1
+    movement: {x: 0, y: -70}
+    setZeroes: 0
+  cancels: []

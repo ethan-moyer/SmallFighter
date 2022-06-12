@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7a58a6bd2aded428f23737e7cedd00, type: 3}
+  m_Name: jA
+  m_EditorClassIdentifier: 
+  actionName: jA
+  alwaysCancelable: 0
+  airOkay: 1
+  stopOnLanding: 1
+  numberOfFrames: 10
+  animationName: jA
+  bufferLimit: 15
+  damage: 4
+  knockdown: 0
+  type: 1
+  hitAnim: 0
+  hitAdv: 11
+  blockAdv: 2
+  pushback: 0.2
+  validMotions:
+  - inputs:
+    - 4a
+  - inputs:
+    - 5a
+  - inputs:
+    - 6a
+  hurtboxes:
+  - startEndFrames: {x: 1, y: 10}
+    useBaseCollider: 1
+    offset: {x: 0, y: 0}
+    size: {x: 0, y: 0}
+  - startEndFrames: {x: 4, y: 10}
+    useBaseCollider: 0
+    offset: {x: 0.85, y: -0.48}
+    size: {x: 0.63, y: 0.7}
+  hitboxes:
+  - startEndFrames: {x: 4, y: 10}
+    offset: {x: 0.8, y: -0.35}
+    size: {x: 0.32, y: 0.31}
+  - startEndFrames: {x: 4, y: 10}
+    offset: {x: 0.9, y: -0.61}
+    size: {x: 0.32, y: 0.37}
+  movements:
+  - frame: 1
+    movementType: 1
+    movement: {x: 0, y: -70}
+    setZeroes: 1
+  cancels: []

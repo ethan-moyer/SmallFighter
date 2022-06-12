@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7a58a6bd2aded428f23737e7cedd00, type: 3}
+  m_Name: Forward Dash
+  m_EditorClassIdentifier: 
+  actionName: Forward Dash
+  alwaysCancelable: 0
+  airOkay: 0
+  stopOnLanding: 0
+  numberOfFrames: 18
+  animationName: ForwardDash
+  bufferLimit: 12
+  damage: 0
+  knockdown: 0
+  type: 0
+  hitAnim: 0
+  hitAdv: 0
+  blockAdv: 0
+  pushback: 0
+  throwData: {fileID: 0}
+  validMotions:
+  - inputs:
+    - 5
+    - 6
+    - 5
+    - 6
+  hurtboxes:
+  - startEndFrames: {x: 1, y: 16}
+    useBaseCollider: 1
+    offset: {x: 0, y: 0}
+    size: {x: 0, y: 0}
+  hitboxes: []
+  movements:
+  - frame: 3
+    movementType: 0
+    movement: {x: 8, y: 0}
+    setZeroes: 0
+  - frame: 14
+    movementType: 0
+    movement: {x: 0, y: 0}
+    setZeroes: 1
+  cancels: []

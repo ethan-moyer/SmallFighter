@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7a58a6bd2aded428f23737e7cedd00, type: 3}
+  m_Name: 5B
+  m_EditorClassIdentifier: 
+  actionName: 5B
+  alwaysCancelable: 0
+  airOkay: 0
+  stopOnLanding: 0
+  numberOfFrames: 31
+  animationName: 5B
+  bufferLimit: 10
+  damage: 9
+  knockdown: 0
+  type: 1
+  hitAnim: 1
+  hitAdv: 2
+  blockAdv: -10
+  pushback: 0.6
+  throwData: {fileID: 0}
+  validMotions:
+  - inputs:
+    - 1b
+  - inputs:
+    - 2b
+  - inputs:
+    - 3b
+  - inputs:
+    - 4b
+  - inputs:
+    - 5b
+  - inputs:
+    - 6b
+  hurtboxes:
+  - startEndFrames: {x: 1, y: 31}
+    useBaseCollider: 1
+    offset: {x: 0, y: 0}
+    size: {x: 0, y: 0}
+  - startEndFrames: {x: 8, y: 14}
+    useBaseCollider: 0
+    offset: {x: 1.03, y: 0.39}
+    size: {x: 1.02, y: 0.54}
+  hitboxes:
+  - startEndFrames: {x: 8, y: 10}
+    offset: {x: 1.1, y: 0.4}
+    size: {x: 0.67, y: 0.42}
+  movements:
+  - frame: 1
+    movementType: 0
+    movement: {x: 0, y: 0}
+    setZeroes: 1
+  cancels:
+  - startEndFrames: {x: 11, y: 31}
+    onHit: 1
+    onBlock: 1
+    actions:
+    - ShoryukenA
