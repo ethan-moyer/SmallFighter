@@ -33,6 +33,7 @@ public class ActionData : ScriptableObject
     public HitboxData[] hitboxes;
     public MovementData[] movements;
     public CancelsData[] cancels;
+    public ProjectileData[] projectiles;
     
     public enum Type { Movement, Light, Heavy, Grab, Special };
 
@@ -80,6 +81,14 @@ public class CancelsData
     public bool onHit;
     public bool onBlock;
     public string[] actions;
+}
+
+[System.Serializable]
+public class ProjectileData
+{
+    public int frame;
+    public Vector2 offset;
+    public GameObject projectilePrefab;
 }
 
 [System.Serializable]

@@ -123,6 +123,9 @@ MonoBehaviour:
   BreakThrow:
     m_PersistentCalls:
       m_Calls: []
+  SpawnProjectile:
+    m_PersistentCalls:
+      m_Calls: []
   paused: 0
   controller: {fileID: 0}
   playerInput: {fileID: 0}
@@ -139,6 +142,7 @@ MonoBehaviour:
   currentHitboxes: []
   currentHurtboxes: []
   blocking: 0
+  canSpawnProjectile: 0
   model: {fileID: 4226338385615229261}
   forwardWalkSpeed: 5
   backwardWalkSpeed: 5
@@ -152,6 +156,7 @@ MonoBehaviour:
   throwBreakAction: {fileID: 11400000, guid: 1565f7aad719d014ca2078d5267deaef, type: 2}
   actions:
   - {fileID: 11400000, guid: 9f3b4efbd168c5246ba599b4766ecef1, type: 2}
+  - {fileID: 11400000, guid: 744b0f587610d3c4b8db621205db4062, type: 2}
   - {fileID: 11400000, guid: 3a9de7d130cdf7d479ed2e1497379080, type: 2}
   - {fileID: 11400000, guid: d887cfcce4bb137418364fe4b04b7b28, type: 2}
   - {fileID: 11400000, guid: 1ce3f74b3816a5f42a4e06d2eb33b3ae, type: 2}

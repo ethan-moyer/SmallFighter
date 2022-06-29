@@ -13,6 +13,7 @@ public class NewFighter : MonoBehaviour
     public const int FrontLayer = 8;
 
     [HideInInspector] public UnityEvent BreakThrow;
+    [HideInInspector] public UnityEvent<NewFighter, ProjectileData> SpawnProjectile;
     [HideInInspector] public bool paused;
     [HideInInspector] public Controller2D controller;
     [HideInInspector] public PlayerInput playerInput;
@@ -29,6 +30,7 @@ public class NewFighter : MonoBehaviour
     [HideInInspector] public List<CollisionBox> currentHitboxes;
     [HideInInspector] public List<CollisionBox> currentHurtboxes;
     [HideInInspector] public bool blocking;
+    [HideInInspector] public bool canSpawnProjectile;
 
     [Header("Components & GameObjects")]
     public GameObject model;
@@ -51,7 +53,6 @@ public class NewFighter : MonoBehaviour
 
     private void Awake()
     {
-        BreakThrow = new UnityEvent();
         controller = GetComponent<Controller2D>();
         playerInput = GetComponent<PlayerInput>();
         boxCollider = GetComponent<BoxCollider2D>();
@@ -85,7 +86,6 @@ public class NewFighter : MonoBehaviour
         {
             gameObject.name = $"Fighter - {currentState.GetType().Name}";
             currentState.OnStateEnter();
-            //currentState.Update(currentInput);
         }
     }
 
@@ -148,9 +148,12 @@ public class NewFighter : MonoBehaviour
             {
                 if (currentAction == null || currentAction.alwaysCancelable)
                 {
-                    currentAction = nextAction;
-                    SwitchState(new Attacking(this));
-                    return;
+                    if (nextAction.projectiles.Length == 0 || canSpawnProjectile)
+                    {
+                        currentAction = nextAction;
+                        SwitchState(new Attacking(this));
+                        return;
+                    }                    
                 }
             }
             else if (currentState is Attacking && currentAction != null)
@@ -159,17 +162,20 @@ public class NewFighter : MonoBehaviour
                 {
                     if (currentFrame >= data.startEndFrames.x && currentFrame <= data.startEndFrames.y && Array.IndexOf(data.actions, nextAction.actionName) != -1)
                     {
-                        print("Switching");
-                        currentAction = nextAction;
-                        SwitchState(new Attacking(this));
-                        return;
+                        if (nextAction.projectiles.Length == 0 || canSpawnProjectile)
+                        {
+                            print("Switching");
+                            currentAction = nextAction;
+                            SwitchState(new Attacking(this));
+                            return;
+                        }                        
                     }
                 }
             }
         }        
     }
 
-    public void GetHit(ActionData action, int hitStunFrames, int blockStunFrames, CollisionBox hitbox)
+    public void GetHit(ActionData action, int hitStunFrames, int blockStunFrames)
     {
         if (!blocking)
         {

@@ -108,6 +108,15 @@ public class Attacking : FighterState
                 }
             }
 
+            // Projectiles
+            foreach (ProjectileData data in fighter.currentAction.projectiles)
+            {
+                if (fighter.currentFrame == data.frame)
+                {
+                    fighter.SpawnProjectile.Invoke(fighter, data);
+                }
+            }
+
             fighter.velocity += acceleration * 0.0167f;
             fighter.currentFrame += 1;
         }

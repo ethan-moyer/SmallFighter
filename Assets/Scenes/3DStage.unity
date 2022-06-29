@@ -295,6 +295,7 @@ MonoBehaviour:
   - {fileID: 1213515674}
   hitParticlePrefab: {fileID: 6065702150216256069, guid: aed092953ba5b554fa369df6d6217064, type: 3}
   blockParticlePrefab: {fileID: 5094815735218616446, guid: 3cac2772241785d468fc1018c297b2d4, type: 3}
+  breakParticlePrefab: {fileID: 139117377527649780, guid: adb98901693413744a2f2964cabaa846, type: 3}
 --- !u!4 &354471183
 Transform:
   m_ObjectHideFlags: 0
@@ -706,7 +707,7 @@ GameObject:
   - component: {fileID: 1406933354}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

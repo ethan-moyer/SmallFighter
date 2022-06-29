@@ -10,22 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1c7a58a6bd2aded428f23737e7cedd00, type: 3}
-  m_Name: Fireball
+  m_Name: FireballA
   m_EditorClassIdentifier: 
-  actionName: 5A
-  code: 1
+  actionName: FireballA
   alwaysCancelable: 0
   airOkay: 0
+  stopOnLanding: 0
   numberOfFrames: 14
   animationName: 5A
+  bufferLimit: 15
   damage: 3
+  knockdown: 0
   type: 1
   hitAnim: 0
-  hitAdv: 30
+  hitAdv: 3
   blockAdv: 2
-  pushback: 0.4
-  bufferWindow: 3
+  pushback: 0.5
+  throwData: {fileID: 0}
   validMotions:
+  - inputs:
+    - 2
+    - 3
+    - 6a
   - inputs:
     - 2
     - 3
@@ -33,31 +39,28 @@ MonoBehaviour:
     - 5a
   - inputs:
     - 2
-    - 3
+    - 3a
     - 6
-    - 6a
-  - inputs:
-    - 2
-    - 3
-    - 6a
-  requiresA: 1
-  requiresB: 0
   hurtboxes:
-  - startEndFrames: {x: 1, y: 1}
+  - startEndFrames: {x: 1, y: 14}
     useBaseCollider: 1
     offset: {x: 0, y: 0}
     size: {x: 0, y: 0}
-  - startEndFrames: {x: 2, y: 14}
+  - startEndFrames: {x: 5, y: 8}
     useBaseCollider: 0
-    offset: {x: 0, y: -0.09}
-    size: {x: 1, y: 3.09}
-  - startEndFrames: {x: 5, y: 7}
-    useBaseCollider: 0
-    offset: {x: 1.03, y: 0.74}
-    size: {x: 1.15, y: 0.43}
+    offset: {x: 0.79, y: 0.4}
+    size: {x: 1.28, y: 0.56}
   hitboxes:
-  - startEndFrames: {x: 5, y: 6}
-    offset: {x: 1.03, y: 0.74}
-    size: {x: 1.06, y: 0.28}
-  movements: []
+  - startEndFrames: {x: 5, y: 7}
+    offset: {x: 1, y: 0.41}
+    size: {x: 0.68, y: 0.47}
+  movements:
+  - frame: 1
+    movementType: 0
+    movement: {x: 0, y: 0}
+    setZeroes: 1
   cancels: []
+  projectiles:
+  - frame: 5
+    offset: {x: 0, y: 0}
+    projectilePrefab: {fileID: 5231894792140452649, guid: a170e010ba3c61c47bb6e99e01069ac6, type: 3}
