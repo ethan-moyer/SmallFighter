@@ -16,16 +16,16 @@ MonoBehaviour:
   alwaysCancelable: 0
   airOkay: 0
   stopOnLanding: 0
-  numberOfFrames: 14
-  animationName: 5A
+  numberOfFrames: 45
+  animationName: Hadouken
   bufferLimit: 15
-  damage: 3
+  damage: 0
   knockdown: 0
-  type: 1
+  type: 4
   hitAnim: 0
-  hitAdv: 3
-  blockAdv: 2
-  pushback: 0.5
+  hitAdv: 0
+  blockAdv: 0
+  pushback: 0
   throwData: {fileID: 0}
   validMotions:
   - inputs:
@@ -50,10 +50,7 @@ MonoBehaviour:
     useBaseCollider: 0
     offset: {x: 0.79, y: 0.4}
     size: {x: 1.28, y: 0.56}
-  hitboxes:
-  - startEndFrames: {x: 5, y: 7}
-    offset: {x: 1, y: 0.41}
-    size: {x: 0.68, y: 0.47}
+  hitboxes: []
   movements:
   - frame: 1
     movementType: 0
@@ -61,6 +58,6 @@ MonoBehaviour:
     setZeroes: 1
   cancels: []
   projectiles:
-  - frame: 5
-    offset: {x: 0, y: 0}
+  - frame: 12
+    offset: {x: 0, y: 0.2}
     projectilePrefab: {fileID: 5231894792140452649, guid: a170e010ba3c61c47bb6e99e01069ac6, type: 3}
