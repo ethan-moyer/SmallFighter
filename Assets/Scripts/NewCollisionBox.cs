@@ -6,10 +6,10 @@ using UnityEngine.Events;
 [RequireComponent(typeof(BoxCollider2D))]
 public class NewCollisionBox : MonoBehaviour
 {
-    public UnityEvent Collided;
+    public UnityEvent<Collider2D> Collided;
     [SerializeField] private LayerMask layerMask;
     [SerializeField] private Color color;
-    private BoxCollider2D boxCollider;
+    public BoxCollider2D boxCollider { get; private set; }
 
 
     private void Awake()
@@ -27,10 +27,12 @@ public class NewCollisionBox : MonoBehaviour
     {
         Collider2D[] colliders = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0f, layerMask);
 
-        if (colliders.Length > 0)
+        foreach (Collider2D collider in colliders)
         {
-            Collided.Invoke();
-            print("Collided");
+            if (collider != boxCollider)
+            {
+                Collided.Invoke(collider);
+            }
         }
     }
 

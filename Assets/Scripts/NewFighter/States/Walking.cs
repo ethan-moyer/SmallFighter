@@ -10,15 +10,13 @@ public class Walking : FighterState
 
     public override void OnStateEnter()
     {
-        fighter.currentHitboxes.Clear();
-        fighter.currentHurtboxes.Clear();
-        fighter.currentHurtboxes.Add(fighter.standingHurtbox);
-        fighter.currentHurtboxes[0].Center = fighter.boxCollider.bounds.center;
+        fighter.ClearHitboxes();
+        fighter.ClearHurtboxes();
+        fighter.currentHurtboxes[0].Init(Vector2.zero, fighter.standingHurtbox.Extents * 2f);
     }
 
     public override void Update(InputData currentInput)
     {
-        fighter.currentHurtboxes[0].Center = fighter.boxCollider.bounds.center;
         fighter.blocking = false;
         fighter.velocity = Vector3.zero;
         
@@ -66,5 +64,9 @@ public class Walking : FighterState
                 break;
             }
         }
+    }
+
+    public override void OnStateExit()
+    {
     }
 }

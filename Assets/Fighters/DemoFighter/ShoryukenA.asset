@@ -25,7 +25,8 @@ MonoBehaviour:
   hitAnim: 1
   hitAdv: 0
   blockAdv: -30
-  pushback: 1.2
+  pushback: 0.8
+  throwData: {fileID: 0}
   validMotions:
   - inputs:
     - 6
@@ -71,3 +72,4 @@ MonoBehaviour:
     movement: {x: 0, y: -70}
     setZeroes: 0
   cancels: []
+  projectiles: []

@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(NewCollisionBox))]
 public class Projectile : MonoBehaviour
 {
     [HideInInspector] public UnityEvent<Projectile> ProjectileDestroyed;
-    [HideInInspector]public NewFighter owner;
-    [HideInInspector] public BoxCollider2D boxCollider;
     public ActionData action;
     [SerializeField] private Vector3 velocity;
+    private NewCollisionBox hitbox;
+    private bool shouldBeDestroyed;
+    public NewFighter owner { get; private set; }
+
 
     public void Init(NewFighter owner)
     {
@@ -19,7 +21,8 @@ public class Projectile : MonoBehaviour
 
     private void Awake()
     {
-        boxCollider = GetComponent<BoxCollider2D>();
+        hitbox = GetComponent<NewCollisionBox>();
+        hitbox.Collided.AddListener(OnHitboxCollides);
     }
 
     private void Update()
@@ -28,10 +31,31 @@ public class Projectile : MonoBehaviour
 
         float leftBound = Camera.main.ViewportToWorldPoint(new Vector3(0f, 0.5f, Mathf.Abs(Camera.main.transform.position.z))).x;
         float rightBound = Camera.main.ViewportToWorldPoint(new Vector3(1f, 0.5f, Mathf.Abs(Camera.main.transform.position.z))).x;
-        if (boxCollider.bounds.max.x < leftBound || boxCollider.bounds.min.x > rightBound)
+        if (hitbox.boxCollider.bounds.max.x < leftBound || hitbox.boxCollider.bounds.min.x > rightBound)
+        {
+            shouldBeDestroyed = true;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (shouldBeDestroyed)
         {
             ProjectileDestroyed.Invoke(this);
-            Destroy(this.gameObject);
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnHitboxCollides(Collider2D col)
+    {
+        if (col.tag == "ProjectileBox")
+        {
+            col.GetComponent<Projectile>().shouldBeDestroyed = true;
+            shouldBeDestroyed = true;
+        }
+        else if (col.tag == "FighterBox" && col.transform.parent != owner.transform)
+        {
+            shouldBeDestroyed = true;
         }
     }
 }

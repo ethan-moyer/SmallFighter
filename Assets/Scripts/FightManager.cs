@@ -29,9 +29,11 @@ public class FightManager : MonoBehaviour
         foreach (NewFighter fighter in fighters)
         {
             fighter.BreakThrow.AddListener(OnBreakThrow);
-            fighter.SpawnProjectile.AddListener(OnSpawnProjectile);
+            //fighter.SpawnProjectile.AddListener(OnSpawnProjectile);
         }
         projectiles = new List<Projectile>();
+
+        //Application.targetFrameRate = 60;
     }
 
     private void Update()
@@ -50,10 +52,82 @@ public class FightManager : MonoBehaviour
         else
         {
             UpdateSides();
-            CheckForHits();
-            CheckProjectiles();
+            //CheckForHits();
+            //CheckProjectiles();
             Push();
         }
+    }
+
+    private IEnumerator Hitstop(int numOfFrames)
+    {
+        foreach (NewFighter fighter in fighters)
+            fighter.PauseFighter();
+
+        for (int i = 0; i < numOfFrames; i++)
+        {
+            yield return null;
+        }
+
+        foreach (NewFighter fighter in fighters)
+            fighter.UnpauseFighter();
+    }
+
+    public void OnFighterHit(NewFighter hitFighter, HitData hitData, bool attackWasBlocked)
+    {
+        Vector3 side = hitFighter.IsOnLeftSide ? Vector3.left : Vector3.right;
+
+        // Push fighters back
+        if (hitData.action.type != ActionData.Type.Projectile)
+        {
+            RaycastHit2D wallHit = Physics2D.Raycast(hitFighter.boxCollider.bounds.center + side * hitFighter.boxCollider.bounds.extents.x * 0.95f, side, hitData.action.pushback);
+            if (wallHit)
+                hitData.hitbox.transform.parent.GetComponent<NewFighter>().controller.Move(side * -1f * hitData.action.pushback);
+            else
+                hitFighter.controller.Move(side * hitData.action.pushback);
+        }
+        else
+        {
+            hitFighter.controller.Move(side * hitData.action.pushback);
+        }
+
+        // Spawn particle effect
+        Vector3 particlePos = hitFighter.boxCollider.bounds.center - side * hitFighter.boxCollider.bounds.extents.x;
+        particlePos.y = hitData.hitbox.boxCollider.bounds.center.y;
+
+        if (attackWasBlocked)
+        {
+            Instantiate(blockParticlePrefab, particlePos, Quaternion.Euler(0f, hitFighter.IsOnLeftSide ? -66f : 66f, 0f));
+        }
+        else
+        {
+            Instantiate(hitParticlePrefab, particlePos, Quaternion.identity);
+        }
+
+        StartCoroutine(Hitstop(3));
+    }
+
+    public void OnFighterBreak(NewFighter thrownFighter, NewFighter grabbingFighter)
+    {
+        StopAllCoroutines();
+        thrownFighter.gameObject.layer = 2;
+        grabbingFighter.gameObject.layer = 2;
+
+        // Push fighters out of each other
+        Vector3 side = thrownFighter.IsOnLeftSide ? Vector3.left : Vector3.right;
+        float raycastLength = thrownFighter.boxCollider.bounds.extents.x + grabbingFighter.boxCollider.bounds.extents.x;
+        
+        RaycastHit2D wallHit = Physics2D.Raycast(thrownFighter.transform.position, side, raycastLength * 1.1f);
+        
+        grabbingFighter.controller.Move(side * -10);
+
+        thrownFighter.animator.Play("Base Layer.HitLight", -1, 0f);
+        thrownFighter.SwitchState(new Stunned(thrownFighter, 20));
+
+        grabbingFighter.animator.Play("Base Layer.HitLight", -1, 0f);
+        grabbingFighter.SwitchState(new Stunned(grabbingFighter, 20));
+
+        thrownFighter.gameObject.layer = 6;
+        grabbingFighter.gameObject.layer = 6;
     }
 
     private void UpdateSides()
@@ -63,38 +137,40 @@ public class FightManager : MonoBehaviour
 
         if (fighters[0].transform.position.x - fighters[0].boxCollider.bounds.extents.x + 0.015f > fighters[1].transform.position.x)
         {
-            fighters[0].SwitchSide(false);
-            fighters[1].SwitchSide(true);
+            if (fighters[0].currentState is Walking)
+                fighters[0].SwitchSide(false, true);
+            if (fighters[1].currentState is Walking)
+                fighters[1].SwitchSide(true, true);
         }
-        else
+        else if (fighters[0].transform.position.x + fighters[0].boxCollider.bounds.extents.x - 0.015f < fighters[1].transform.position.x)
         {
-            fighters[0].SwitchSide(true);
-            fighters[1].SwitchSide(false);
+            if (fighters[0].currentState is Walking)
+                fighters[0].SwitchSide(true, true);
+            if (fighters[1].currentState is Walking)
+                fighters[1].SwitchSide(false, true);
         }
     }
 
-    private void OnBreakThrow()
+    public void OnBreakThrow(NewFighter fighter, NewFighter opponent)
     {
         print("Throw break!");
-        
-        if (fighters.Length != 2)
-            return;
 
-        foreach (NewFighter fighter in fighters)
-        {
-            if (fighter.beingThrown)
-            {
-                float offset = fighters[0].boxCollider.bounds.extents.x + fighters[1].boxCollider.bounds.extents.x;
-                fighter.controller.Move(Vector3.right * (fighter.IsOnLeftSide ? -offset : offset));
-            }
+        float offset = fighter.boxCollider.bounds.extents.x + opponent.boxCollider.bounds.extents.x;
+        fighter.controller.Move(Vector3.right * (fighter.IsOnLeftSide ? -offset : offset));
 
-            fighter.controller.Move(Vector3.right * (fighter.IsOnLeftSide ? -1.5f : 1.5f));
-            fighter.animator.Play("Base Layer.HitLight", -1, 0f);
-            fighter.SwitchState(new Stunned(fighter, 20));
-        }
+        fighter.controller.Move(Vector3.right * (fighter.IsOnLeftSide ? -1.5f : 1.5f));
+        fighter.animator.Play("Base Layer.HitLight", -1, 0f);
+        fighter.SwitchState(new Stunned(fighter, 20));
 
-        Vector3 particlePos = (fighters[0].transform.position + fighters[1].transform.position) / 2f;
+        opponent.controller.Move(Vector3.right * (opponent.IsOnLeftSide ? -1.5f : 1.5f));
+        opponent.animator.Play("Base Layer.HitLight", -1, 0f);
+        opponent.SwitchState(new Stunned(opponent, 20));
+
+        Vector3 particlePos = (fighter.transform.position + opponent.transform.position) / 2f;
         Instantiate(breakParticlePrefab, particlePos, Quaternion.identity);
+
+        fighter.ClearHitThisFrame();
+        opponent.ClearHitThisFrame();
     }
 
     private void OnSpawnProjectile(NewFighter fighter, ProjectileData data)
@@ -131,17 +207,30 @@ public class FightManager : MonoBehaviour
         fighter.GetHit(action, hitStun, blockStun);
     }
 
-    private void ThrowFighter(NewFighter fighter, NewFighter opponent, ActionData action)
+    public void ThrowFighter(NewFighter fighter, NewFighter opponent, ActionData action)
     {
         opponent.currentThrow = action.throwData;
         opponent.SwitchState(new Throwing(opponent));
 
-        fighter.controller.Move(opponent.transform.position - fighter.transform.position);
+        Vector3 offset = opponent.transform.position - fighter.transform.position;
+        StartCoroutine(DelayedThrowInitialOffset(fighter, offset));
+        fighter.controller.Move(offset);
         fighter.beingThrown = true;
         fighter.currentThrow = action.throwData;
+        fighter.throwOpponent = opponent;
         fighter.SwitchState(new Throwing(fighter));
     }
 
+    private IEnumerator DelayedThrowInitialOffset(NewFighter fighter, Vector3 offset)
+    {
+        offset = !fighter.IsOnLeftSide ? offset : -offset;
+        
+        fighter.model.transform.Translate(fighter.model.transform.InverseTransformVector(offset));
+        yield return null;
+        fighter.model.transform.Translate(fighter.model.transform.InverseTransformVector(-offset));
+    }
+
+    /*
     private void CheckForHits()
     {
         if (fighters.Length != 2)
@@ -235,7 +324,7 @@ public class FightManager : MonoBehaviour
             }
         }
     }
-
+    
     private void CheckProjectiles()
     {
         if (fighters.Length != 2)
@@ -323,6 +412,7 @@ public class FightManager : MonoBehaviour
         }
         projectiles = filteredProjectiles;
     }
+    */
 
     private void Push()
     {
@@ -371,7 +461,7 @@ public class FightManager : MonoBehaviour
                             }
 
                             if (fighters[i].velocity.x < 0f)
-                                fighters[i].velocity.x = 0f;
+                                fighters[i].velocity = new Vector2(0f, fighters[i].velocity.y);
                         }
                         else
                         {
@@ -390,7 +480,7 @@ public class FightManager : MonoBehaviour
                             }
 
                             if (fighters[i].velocity.x > 0f)
-                                fighters[i].velocity.x = 0f;
+                                fighters[i].velocity = new Vector2(0f, fighters[i].velocity.y);
                         }
                     }
                 }

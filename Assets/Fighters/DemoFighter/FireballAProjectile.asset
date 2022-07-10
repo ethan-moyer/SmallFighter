@@ -21,11 +21,11 @@ MonoBehaviour:
   bufferLimit: 15
   damage: 0
   knockdown: 0
-  type: 4
+  type: 5
   hitAnim: 1
   hitAdv: 31
   blockAdv: 20
-  pushback: 0
+  pushback: 0.6
   throwData: {fileID: 0}
   validMotions: []
   hurtboxes: []

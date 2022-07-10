@@ -12,25 +12,26 @@ public class NewFighter : MonoBehaviour
     public const int BackLayer = 7;
     public const int FrontLayer = 8;
 
-    [HideInInspector] public UnityEvent BreakThrow;
-    [HideInInspector] public UnityEvent<NewFighter, ProjectileData> SpawnProjectile;
-    [HideInInspector] public bool paused;
-    [HideInInspector] public Controller2D controller;
-    [HideInInspector] public PlayerInput playerInput;
-    [HideInInspector] public BoxCollider2D boxCollider;
-    [HideInInspector] public Animator animator;
-    public Vector3 velocity;
-    public bool onGround;
-    public bool shouldKnockdown;
-    public ActionData currentAction;
-    public bool beingThrown;
-    public ThrowData currentThrow;
-    public int currentFrame;
-    [HideInInspector] public bool actionHasHit;
-    [HideInInspector] public List<CollisionBox> currentHitboxes;
-    [HideInInspector] public List<CollisionBox> currentHurtboxes;
-    [HideInInspector] public bool blocking;
-    [HideInInspector] public bool canSpawnProjectile;
+    [HideInInspector] public UnityEvent<NewFighter, NewFighter> BreakThrow;
+    [HideInInspector] private bool paused;
+    public Controller2D controller { get; private set; }
+    public PlayerInput playerInput { get; private set; }
+    public BoxCollider2D boxCollider { get; private set; }
+    public Animator animator { get; private set; }
+    public Vector3 velocity { get; set; }
+    public bool onGround { get; private set; }
+    public bool shouldKnockdown { get; set; }
+    public ActionData currentAction { get; set; }
+    public bool beingThrown { get; set; }
+    public ThrowData currentThrow { get; set; }
+    public NewFighter throwOpponent { get; set; }
+    public int currentFrame { get; set; }
+    public bool actionHasHit { get; set; }
+    public bool blocking { get; set; }
+    public bool canSpawnProjectile { get; set; }
+    [field: SerializeField] public List<NewCollisionBox> currentHitboxes { get; private set; }
+    [field: SerializeField] public List<NewCollisionBox> currentHurtboxes { get; private set; }
+    
 
     [Header("Components & GameObjects")]
     public GameObject model;
@@ -50,6 +51,7 @@ public class NewFighter : MonoBehaviour
     private InputInterpreter interpreter;
     public FighterState currentState;
     private InputData currentInput;
+    private HitData hitThisFrame;
 
     private void Awake()
     {
@@ -58,8 +60,7 @@ public class NewFighter : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         animator = model.GetComponent<Animator>();
         velocity = Vector3.zero;
-        currentHitboxes = new List<CollisionBox>();
-        currentHurtboxes = new List<CollisionBox>();
+        canSpawnProjectile = true;
         interpreter = new InputInterpreter(actions);
 
         if (playerInput.defaultControlScheme == "KeyboardWASD" || playerInput.defaultControlScheme == "KeyboardArrows")
@@ -73,6 +74,43 @@ public class NewFighter : MonoBehaviour
         }
 
         SwitchState(new Walking(this));
+    }
+
+    private void Update()
+    {
+        currentInput = InputHelper.GetInputData(playerInput, IsOnLeftSide);
+        if (!paused)
+        {
+            onGround = Physics2D.Raycast(boxCollider.bounds.center, Vector2.down, boxCollider.bounds.extents.y + 0.015f, LayerMask.GetMask("Default"));
+            SwitchAction(interpreter.UpdateBuffer(currentInput));
+            currentState.Update(currentInput);
+            controller.Move(velocity * 0.0167f);
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (hitThisFrame != null)
+        {
+            if (hitThisFrame.action.type == ActionData.Type.Grab)
+            {
+                if (actionHasHit && currentAction.type == ActionData.Type.Grab)
+                {
+                    FightManager.instance.ThrowFighter(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>(), hitThisFrame.action);
+                    FightManager.instance.OnBreakThrow(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>());
+                }
+                else if (!actionHasHit || currentAction.type < ActionData.Type.Grab)
+                {
+                    FightManager.instance.ThrowFighter(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>(), hitThisFrame.action);
+                }
+            }
+            else if (!actionHasHit || currentAction.type <= hitThisFrame.action.type)
+            {
+                FightManager.instance.OnFighterHit(this, hitThisFrame, blocking);
+                GetHit(hitThisFrame.action, hitThisFrame.hitStun, hitThisFrame.blockStun);
+            }
+            hitThisFrame = null;
+        }
     }
 
     public void SwitchState(FighterState nextState)
@@ -89,52 +127,24 @@ public class NewFighter : MonoBehaviour
         }
     }
 
-    public bool CanBreakThrow()
-    {
-        return interpreter.BufferContainsAction(throwBreakAction);
-    }
-
-    public void SwitchSide(bool nowOnLeftSide)
-    {
-        if (currentState is Walking && IsOnLeftSide != nowOnLeftSide)
+    public void SwitchSide(bool nowOnLeftSide, bool delayedFlip)
+    {        
+        if (IsOnLeftSide != nowOnLeftSide)
         {
+            print("SwitchSide");
             IsOnLeftSide = nowOnLeftSide;
-            model.transform.localScale = new Vector3(model.transform.localScale.x, model.transform.localScale.y, -model.transform.localScale.z);
             SetModelLayer(nowOnLeftSide ? FrontLayer : BackLayer);
+            if (delayedFlip)
+                StartCoroutine(DelayedModelFlip());
+            else
+                model.transform.localScale = new Vector3(model.transform.localScale.x, model.transform.localScale.y, -model.transform.localScale.z);
         }
     }
 
-    public void SetModelLayer(int layer)
+    private IEnumerator DelayedModelFlip()
     {
-        model.layer = layer;
-        foreach (Transform child in model.transform)
-        {
-            child.gameObject.layer = layer;
-        }
-    }
-
-    public void PauseFighter()
-    {
-        paused = true;
-        animator.enabled = false;
-    }
-
-    public void UnpauseFighter()
-    {
-        paused = false;
-        animator.enabled = true;
-    }
-
-    private void Update()
-    {
-        currentInput = InputHelper.GetInputData(playerInput, IsOnLeftSide);
-        if (!paused)
-        {
-            onGround = Physics2D.Raycast(boxCollider.bounds.center, Vector2.down, boxCollider.bounds.extents.y + 0.015f, LayerMask.GetMask("Default"));
-            SwitchAction(interpreter.UpdateBuffer(currentInput));
-            currentState.Update(currentInput);
-            controller.Move(velocity * 0.0167f);
-        }        
+        yield return null;
+        model.transform.localScale = new Vector3(model.transform.localScale.x, model.transform.localScale.y, -model.transform.localScale.z);
     }
 
     private void SwitchAction(List<ActionData> potentialActions)
@@ -153,7 +163,7 @@ public class NewFighter : MonoBehaviour
                         currentAction = nextAction;
                         SwitchState(new Attacking(this));
                         return;
-                    }                    
+                    }
                 }
             }
             else if (currentState is Attacking && currentAction != null)
@@ -164,15 +174,14 @@ public class NewFighter : MonoBehaviour
                     {
                         if (nextAction.projectiles.Length == 0 || canSpawnProjectile)
                         {
-                            print("Switching");
                             currentAction = nextAction;
                             SwitchState(new Attacking(this));
                             return;
-                        }                        
+                        }
                     }
                 }
             }
-        }        
+        }
     }
 
     public void GetHit(ActionData action, int hitStunFrames, int blockStunFrames)
@@ -208,7 +217,7 @@ public class NewFighter : MonoBehaviour
                     animator.Play("Base Layer.HitAir", -1, 0f);
                 }
                 SwitchState(new Stunned(this, hitStunFrames));
-            }            
+            }
         }
         else
         {
@@ -217,28 +226,145 @@ public class NewFighter : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    public void SpawnProjectile(ProjectileData data)
     {
-        if (currentHurtboxes != null)
-        {
-            if (currentState is Stunned)
-                Gizmos.color = new Color(0f, 0f, 1f, 0.5f);
-            else
-                Gizmos.color = new Color(0f, 1f, 0f, 0.5f);
+        canSpawnProjectile = false;
 
-            foreach (CollisionBox box in currentHurtboxes)
-            {
-                Gizmos.DrawCube(box.Center, box.Extents * 2f);
-            }
-        }
+        Vector3 offset = new Vector3(data.offset.x * (IsOnLeftSide ? 1 : -1), data.offset.y, 0f);
+        Quaternion rotation = Quaternion.Euler(0f, (IsOnLeftSide ? 0f : 180f), 0f);
+        Projectile projectile = Instantiate(data.projectilePrefab, transform.position + offset, rotation).GetComponent<Projectile>();
+        projectile.ProjectileDestroyed.AddListener(OnProjectileDespawned);
+        projectile.Init(this);
+    }
 
-        if (currentHitboxes != null)
+    public void OnProjectileDespawned(Projectile p)
+    {
+        canSpawnProjectile = true;
+    }
+
+    public void OnHitboxCollides(Collider2D col)
+    {
+        if (col.gameObject.tag == "FighterBox")
         {
-            Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
-            foreach (CollisionBox box in currentHitboxes)
+            NewFighter owner = col.transform.parent.GetComponent<NewFighter>();
+            if (owner != this)
             {
-                Gizmos.DrawCube(box.Center, box.Extents * 2f);
+                actionHasHit = true;
             }
         }
     }
+
+    public void OnHurtboxCollides(Collider2D col)
+    {
+        if (col.tag == "FighterBox")
+        {
+            NewFighter owner = col.transform.parent.GetComponent<NewFighter>();
+            if (owner != this)
+            {
+                int hitStun = owner.currentAction.numberOfFrames - owner.currentFrame + owner.currentAction.hitAdv;
+                int blockStun = owner.currentAction.numberOfFrames - owner.currentFrame + owner.currentAction.blockAdv;
+                hitThisFrame = new HitData(owner.currentAction, col.GetComponent<NewCollisionBox>(), hitStun, blockStun);
+            }
+        }
+        else if (col.tag == "ProjectileBox")
+        {
+            Projectile projectile = col.GetComponent<Projectile>();
+            if (projectile.owner != this)
+            {
+                hitThisFrame = new HitData(projectile.action, col.GetComponent<NewCollisionBox>(), projectile.action.hitAdv, projectile.action.blockAdv);
+            }
+        }
+    }
+
+    public void ClearHitboxes()
+    {
+        foreach (NewCollisionBox hitbox in currentHitboxes)
+        {
+            hitbox.gameObject.SetActive(false);
+        }
+    }
+
+    public NewCollisionBox GetAvailableHitbox()
+    {
+        foreach (NewCollisionBox hitbox in currentHitboxes)
+        {
+            if (!hitbox.gameObject.activeInHierarchy)
+                return hitbox;
+        }
+        return null;
+    }
+
+    public bool HasActiveHitboxes()
+    {
+        foreach (NewCollisionBox hitbox in currentHitboxes)
+        {
+            if (hitbox.gameObject.activeInHierarchy)
+                return true;
+        }
+        return false;
+    }
+
+    public void ClearHurtboxes()
+    {
+        foreach (NewCollisionBox hurtbox in currentHurtboxes)
+        {
+            hurtbox.gameObject.SetActive(false);
+        }
+    }
+
+    public NewCollisionBox GetAvailableHurtbox()
+    {
+        foreach (NewCollisionBox hurtbox in currentHurtboxes)
+        {
+            if (!hurtbox.gameObject.activeInHierarchy)
+                return hurtbox;
+        }
+        return null;
+    }    
+
+    public void ClearHitThisFrame()
+    {
+        hitThisFrame = null;
+    }
+
+    public bool CanBreakThrow()
+    {
+        return interpreter.BufferContainsAction(throwBreakAction);
+    }    
+
+    public void SetModelLayer(int layer)
+    {
+        model.layer = layer;
+        foreach (Transform child in model.transform)
+        {
+            child.gameObject.layer = layer;
+        }
+    }
+
+    public void PauseFighter()
+    {
+        paused = true;
+        animator.enabled = false;
+    }
+
+    public void UnpauseFighter()
+    {
+        paused = false;
+        animator.enabled = true;
+    }        
+
+    public void GetThrown(Transform opponent, ActionData throwAction) 
+    {
+        beingThrown = true;
+        currentThrow = throwAction.throwData;
+        throwOpponent = opponent.GetComponent<NewFighter>();
+        SwitchState(new Throwing(this));
+        controller.Move(opponent.position - transform.position);
+    }
+
+    private IEnumerator TranslateAfterFrame(Vector3 translation)
+    {
+        yield return null;
+        controller.Move(translation);
+    }    
 }

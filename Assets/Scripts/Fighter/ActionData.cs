@@ -35,7 +35,7 @@ public class ActionData : ScriptableObject
     public CancelsData[] cancels;
     public ProjectileData[] projectiles;
     
-    public enum Type { Movement, Light, Heavy, Grab, Special };
+    public enum Type { Movement, Light, Heavy, Grab, Special, Projectile };
 
     public enum HitAnim { Light, Heavy };
 }

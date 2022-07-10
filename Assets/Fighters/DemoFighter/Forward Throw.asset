@@ -18,6 +18,6 @@ MonoBehaviour:
   canTech: 1
   animationName: ForwardThrow
   damageFrames: []
-  opponentTargetOffset: {x: -1.088, y: 0}
+  opponentTargetOffset: {x: 1.088, y: 0}
   tossFrame: 28
-  tossSpeed: -8
+  tossSpeed: 8

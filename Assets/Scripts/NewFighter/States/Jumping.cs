@@ -19,17 +19,15 @@ public class Jumping : FighterState
 
     public override void OnStateEnter()
     {
-        fighter.currentHitboxes.Clear();
-        fighter.currentHurtboxes.Clear();
-        fighter.currentHurtboxes.Add(fighter.standingHurtbox);
-        fighter.currentHurtboxes[0].Center = fighter.boxCollider.bounds.center;
+        fighter.ClearHitboxes();
+        fighter.ClearHurtboxes();
+        fighter.currentHurtboxes[0].Init(Vector2.zero, fighter.standingHurtbox.Extents * 2f);
+        fighter.blocking = false;
         fighter.animator.Play("Base Layer.Jump", -1, 0f);
     }
 
     public override void Update(InputData currentInput)
     {
-        fighter.currentHurtboxes[0].Center = fighter.boxCollider.bounds.center;
-
         if (!inAir)
         {
             if (startupTimer >= JumpStartup)
@@ -44,10 +42,10 @@ public class Jumping : FighterState
         }
         else
         {
-            fighter.velocity.y -= fighter.gravity * 0.0167f;
+            fighter.velocity = new Vector2(fighter.velocity.x, fighter.velocity.y - fighter.gravity * 0.0167f);
             if (fighter.velocity.y <= 0f && fighter.onGround)
             {
-                fighter.velocity.x = 0f;
+                fighter.velocity = new Vector2(0f, fighter.velocity.y);
                 if (recoveryTimer >= JumpRecovery)
                 {
                     fighter.SwitchState(new Walking(fighter));

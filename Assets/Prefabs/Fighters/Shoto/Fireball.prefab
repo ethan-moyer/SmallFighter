@@ -10,10 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 7267548521428236420}
   - component: {fileID: 1461720664165518504}
+  - component: {fileID: -6801922308802913012}
   - component: {fileID: 1553390517478759995}
-  m_Layer: 2
+  m_Layer: 10
   m_Name: Fireball
-  m_TagString: Untagged
+  m_TagString: ProjectileBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57,8 +58,27 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.16, y: 0.91}
+  m_Size: {x: 0.98, y: 0.67}
   m_EdgeRadius: 0
+--- !u!114 &-6801922308802913012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5231894792140452649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d58c6517b5beff43a4e4b64b4e2b52d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Collided:
+    m_PersistentCalls:
+      m_Calls: []
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 3072
+  color: {r: 1, g: 0, b: 0, a: 0.101960786}
 --- !u!114 &1553390517478759995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,8 +94,6 @@ MonoBehaviour:
   ProjectileDestroyed:
     m_PersistentCalls:
       m_Calls: []
-  owner: {fileID: 0}
-  boxCollider: {fileID: 0}
   action: {fileID: 11400000, guid: 1cb7ede3878d0494f85d6e91338ccbbd, type: 2}
   velocity: {x: 8, y: 0, z: 0}
 --- !u!1 &7228723992556564270

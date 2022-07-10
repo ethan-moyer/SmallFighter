@@ -15,7 +15,7 @@ public class CameraFollow : MonoBehaviour
         fighters = GameObject.FindGameObjectsWithTag("Fighter");
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         if (fighters.Length > 0)
         {

@@ -64,3 +64,4 @@ MonoBehaviour:
     onBlock: 1
     actions:
     - ShoryukenA
+  projectiles: []

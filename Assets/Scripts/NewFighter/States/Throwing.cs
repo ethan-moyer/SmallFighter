@@ -11,8 +11,8 @@ public class Throwing : FighterState
     public override void OnStateEnter()
     {
         fighter.currentFrame = 1;
-        fighter.currentHitboxes.Clear();
-        fighter.currentHurtboxes.Clear();
+        fighter.ClearHitboxes();
+        fighter.ClearHurtboxes();
         fighter.velocity = Vector3.zero;
         fighter.gameObject.layer = 2;
 
@@ -37,6 +37,8 @@ public class Throwing : FighterState
         {
             if (fighter.beingThrown)
             {
+                if (fighter.currentThrow.tossSpeed < 0f)
+                    fighter.SwitchSide(!fighter.IsOnLeftSide, false);
                 fighter.animator.Play("Rising", -1, 0f);
                 fighter.SwitchState(new Knockdown(fighter));
             }
@@ -51,7 +53,7 @@ public class Throwing : FighterState
             {
                 if (fighter.currentFrame <= 2 && fighter.CanBreakThrow())
                 {
-                    fighter.BreakThrow.Invoke();
+                    fighter.BreakThrow.Invoke(fighter, fighter.throwOpponent);
                     return;
                 }
 
@@ -74,6 +76,7 @@ public class Throwing : FighterState
         fighter.SetModelLayer(fighter.IsOnLeftSide ? NewFighter.FrontLayer : NewFighter.BackLayer);
         fighter.currentThrow = null;
         fighter.beingThrown = false;
+        fighter.throwOpponent = null;
         fighter.gameObject.layer = 6;
     }
 }

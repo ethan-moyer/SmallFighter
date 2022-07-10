@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7a58a6bd2aded428f23737e7cedd00, type: 3}
+  m_Name: Backward Grab
+  m_EditorClassIdentifier: 
+  actionName: Backward Grab
+  alwaysCancelable: 0
+  airOkay: 0
+  stopOnLanding: 0
+  numberOfFrames: 25
+  animationName: Grab
+  bufferLimit: 1
+  damage: 0
+  knockdown: 0
+  type: 3
+  hitAnim: 0
+  hitAdv: 0
+  blockAdv: 0
+  pushback: 0
+  throwData: {fileID: 11400000, guid: 7a3928352f335c848be1d841fb72625f, type: 2}
+  validMotions:
+  - inputs:
+    - 4c
+  hurtboxes:
+  - startEndFrames: {x: 1, y: 25}
+    useBaseCollider: 1
+    offset: {x: 0, y: 0}
+    size: {x: 0, y: 0}
+  hitboxes:
+  - startEndFrames: {x: 5, y: 8}
+    offset: {x: 0.65, y: 0}
+    size: {x: 0.24, y: 2.22}
+  movements:
+  - frame: 1
+    movementType: 0
+    movement: {x: 0, y: 0}
+    setZeroes: 1
+  cancels: []
+  projectiles: []

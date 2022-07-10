@@ -13,8 +13,8 @@ public class Knockdown : FighterState
 
     public override void OnStateEnter()
     {
-        fighter.currentHitboxes.Clear();
-        fighter.currentHurtboxes.Clear();
+        fighter.ClearHitboxes();
+        fighter.ClearHurtboxes();
         fighter.velocity = Vector3.zero;
         fighter.shouldKnockdown = false;
         fighter.model.layer = NewFighter.BackLayer;

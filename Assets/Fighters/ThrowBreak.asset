@@ -38,3 +38,4 @@ MonoBehaviour:
   hitboxes: []
   movements: []
   cancels: []
+  projectiles: []

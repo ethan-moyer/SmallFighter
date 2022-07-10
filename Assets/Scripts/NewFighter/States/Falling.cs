@@ -14,21 +14,20 @@ public class Falling : FighterState
 
     public override void OnStateEnter()
     {
-        fighter.currentHitboxes.Clear();
-        fighter.currentHurtboxes.Clear();
-        fighter.currentHurtboxes.Add(fighter.standingHurtbox);
-        fighter.currentHurtboxes[0].Center = fighter.boxCollider.bounds.center;
+        fighter.ClearHitboxes();
+        fighter.ClearHurtboxes();
+        fighter.currentHurtboxes[0].Init(Vector2.zero, fighter.standingHurtbox.Extents * 2f);
+        fighter.blocking = false;
     }
 
     public override void Update(InputData currentInput)
     {
-        fighter.currentHurtboxes[0].Center = fighter.boxCollider.bounds.center;
         if (!landed)
         {
-            fighter.velocity.y -= fighter.gravity * 0.0167f;
+            fighter.velocity = new Vector2(fighter.velocity.x, fighter.velocity.y - fighter.gravity * 0.0167f);
             if (fighter.velocity.y <= 0f && fighter.onGround)
             {
-                fighter.velocity.x = 0;
+                fighter.velocity = new Vector2(0f, fighter.velocity.y);
                 fighter.animator.Play("Base Layer.Landing", -1, 0f);
                 landed = true;
             }

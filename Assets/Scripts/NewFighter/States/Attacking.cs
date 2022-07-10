@@ -15,8 +15,9 @@ public class Attacking : FighterState
         fighter.SetModelLayer(NewFighter.FrontLayer);
         fighter.currentFrame = 1;
         fighter.actionHasHit = false;
-        fighter.currentHitboxes.Clear();
-        fighter.currentHurtboxes.Clear();
+        fighter.ClearHitboxes();
+        fighter.ClearHurtboxes();
+        fighter.blocking = false;
 
         if (fighter.currentAction != null)
             fighter.animator.Play($"Base Layer.{fighter.currentAction.animationName}", -1, 0f);
@@ -42,7 +43,7 @@ public class Attacking : FighterState
         else
         {
             // Update hurtboxes
-            fighter.currentHurtboxes.Clear();
+            fighter.ClearHurtboxes();
             foreach (HurtboxData data in fighter.currentAction.hurtboxes)
             {
                 if (fighter.currentFrame >= data.startEndFrames.x && fighter.currentFrame <= data.startEndFrames.y)
@@ -50,19 +51,18 @@ public class Attacking : FighterState
                     if (data.useBaseCollider)
                     {
                         fighter.standingHurtbox.Center = fighter.transform.position;
-                        fighter.currentHurtboxes.Add(fighter.standingHurtbox);
+                        fighter.GetAvailableHurtbox().Init(Vector2.zero, fighter.standingHurtbox.Extents * 2f);
                     }
                     else
                     {
                         Vector2 offset = new Vector2(data.offset.x * (fighter.IsOnLeftSide ? 1 : -1), data.offset.y);
-                        CollisionBox hurtbox = new CollisionBox((Vector2)fighter.transform.position + offset, data.size);
-                        fighter.currentHurtboxes.Add(hurtbox);
+                        fighter.GetAvailableHurtbox().Init(offset, data.size);
                     }
                 }
             }
 
             // Update hitboxes
-            fighter.currentHitboxes.Clear();
+            fighter.ClearHitboxes();
             if (!fighter.actionHasHit)
             {
                 foreach (HitboxData data in fighter.currentAction.hitboxes)
@@ -70,16 +70,7 @@ public class Attacking : FighterState
                     if (fighter.currentFrame >= data.startEndFrames.x && fighter.currentFrame <= data.startEndFrames.y)
                     {
                         Vector2 offset = new Vector2(data.offset.x * (fighter.IsOnLeftSide ? 1 : -1), data.offset.y);
-                        CollisionBox hitbox = new CollisionBox((Vector2)fighter.transform.position + offset, data.size);
-                        fighter.currentHitboxes.Add(hitbox);
-
-                        /*if (HitboxTouchingOpponent(hitbox))
-                        {
-                            fighter.actionHasHit = true;
-                            int hitStunFrames = fighter.currentAction.numberOfFrames - fighter.currentFrame + 1 + fighter.currentAction.hitAdv;
-                            int blockStunFrames = fighter.currentAction.numberOfFrames - fighter.currentFrame + 1 + fighter.currentAction.blockAdv;
-                            fighter.opponent.GetHit(fighter.currentAction, hitStunFrames, blockStunFrames, hitbox);
-                        }*/
+                        fighter.GetAvailableHitbox().Init(offset, data.size);
                     }
                 }
             }
@@ -92,10 +83,10 @@ public class Attacking : FighterState
                     if (data.movementType == MovementData.MovementType.Velocity)
                     {
                         if (data.movement.x != 0f || data.setZeroes)
-                            fighter.velocity.x = fighter.IsOnLeftSide ? data.movement.x : -data.movement.x;
+                            fighter.velocity = new Vector2(fighter.IsOnLeftSide ? data.movement.x : -data.movement.x, fighter.velocity.y);
 
                         if (data.movement.y != 0f || data.setZeroes)
-                            fighter.velocity.y = data.movement.y;
+                            fighter.velocity = new Vector2(fighter.velocity.x, data.movement.y);
                     }
                     else
                     {
@@ -113,7 +104,7 @@ public class Attacking : FighterState
             {
                 if (fighter.currentFrame == data.frame)
                 {
-                    fighter.SpawnProjectile.Invoke(fighter, data);
+                    fighter.SpawnProjectile(data);
                 }
             }
 
@@ -125,7 +116,7 @@ public class Attacking : FighterState
     public override void OnStateExit()
     {
         fighter.SetModelLayer(fighter.IsOnLeftSide ? NewFighter.FrontLayer : NewFighter.BackLayer);
-        //fighter.velocity = Vector3.zero;
         fighter.currentAction = null;
+        fighter.actionHasHit = false;
     }
 }
