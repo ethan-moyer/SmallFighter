@@ -13,11 +13,13 @@ public class NewFighter : MonoBehaviour
     public const int FrontLayer = 8;
 
     [HideInInspector] public UnityEvent<NewFighter, NewFighter> BreakThrow;
+    [HideInInspector] public UnityEvent<NewFighter> TookDamage;
     [HideInInspector] private bool paused;
     public Controller2D controller { get; private set; }
     public PlayerInput playerInput { get; private set; }
     public BoxCollider2D boxCollider { get; private set; }
     public Animator animator { get; private set; }
+    public int currentHealth { get; set; }
     public Vector3 velocity { get; set; }
     public bool onGround { get; private set; }
     public bool shouldKnockdown { get; set; }
@@ -36,6 +38,7 @@ public class NewFighter : MonoBehaviour
     [Header("Components & GameObjects")]
     public GameObject model;
     [Header("Fighter Attributes")]
+    public int maxHealth = 100;
     public float forwardWalkSpeed = 5f;
     public float backwardWalkSpeed = 5f;
     public float horizontalJumpSpeed = 8f;
@@ -59,6 +62,7 @@ public class NewFighter : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         boxCollider = GetComponent<BoxCollider2D>();
         animator = model.GetComponent<Animator>();
+        currentHealth = maxHealth;
         velocity = Vector3.zero;
         canSpawnProjectile = true;
         interpreter = new InputInterpreter(actions);
@@ -170,7 +174,7 @@ public class NewFighter : MonoBehaviour
             {
                 foreach (CancelsData data in currentAction.cancels)
                 {
-                    if (currentFrame >= data.startEndFrames.x && currentFrame <= data.startEndFrames.y && Array.IndexOf(data.actions, nextAction.actionName) != -1)
+                    if (actionHasHit && currentFrame >= data.startEndFrames.x && currentFrame <= data.startEndFrames.y && Array.IndexOf(data.actions, nextAction.actionName) != -1)
                     {
                         if (nextAction.projectiles.Length == 0 || canSpawnProjectile)
                         {
@@ -188,6 +192,8 @@ public class NewFighter : MonoBehaviour
     {
         if (!blocking)
         {
+            currentHealth -= action.damage;
+            TookDamage.Invoke(this);
             if (onGround)
             {
                 if (action.knockdown)

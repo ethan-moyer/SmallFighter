@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FightManager : MonoBehaviour
 {
@@ -12,6 +14,12 @@ public class FightManager : MonoBehaviour
     [SerializeField] private GameObject hitParticlePrefab;
     [SerializeField] private GameObject blockParticlePrefab;
     [SerializeField] private GameObject breakParticlePrefab;
+
+    [Header("GUI")]
+    [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private Image[] fighterHealthBars;
+    [SerializeField] private GameObject[] fighterRoundIcons;
+
     private int hitstopTimer;
     private List<Projectile> projectiles;
 
@@ -29,11 +37,15 @@ public class FightManager : MonoBehaviour
         foreach (NewFighter fighter in fighters)
         {
             fighter.BreakThrow.AddListener(OnBreakThrow);
-            //fighter.SpawnProjectile.AddListener(OnSpawnProjectile);
+            fighter.TookDamage.AddListener(OnTookDamage);
         }
         projectiles = new List<Projectile>();
+        Application.targetFrameRate = 60;
+    }
 
-        //Application.targetFrameRate = 60;
+    private void Start()
+    {
+        StartCoroutine(Timer());
     }
 
     private void Update()
@@ -52,10 +64,41 @@ public class FightManager : MonoBehaviour
         else
         {
             UpdateSides();
-            //CheckForHits();
-            //CheckProjectiles();
             Push();
         }
+    }
+
+    private IEnumerator Timer()
+    {
+        int timeRemaining = 60;
+
+        while (timeRemaining > 0)
+        {
+            timeRemaining -= 1;
+            timerText.text = timeRemaining.ToString();
+
+            for (int i = 0; i < 60; i++)
+                yield return null;            
+        }
+    }
+
+    private IEnumerator ShakeCamera(int duration, float strength)
+    {
+        Vector3 startingPos = Camera.main.transform.localPosition;
+        int elapsedFrames = 0;
+
+        while (elapsedFrames < duration)
+        {
+            float xOffset = Random.Range(-1f, 1f) * strength;
+            float yOffset = Random.Range(-1f, 1f) * strength;
+
+            Camera.main.transform.localPosition = new Vector3(xOffset, yOffset, startingPos.z);
+
+            elapsedFrames += 1;
+            yield return null;
+        }
+
+        Camera.main.transform.localPosition = startingPos;
     }
 
     private IEnumerator Hitstop(int numOfFrames)
@@ -104,50 +147,22 @@ public class FightManager : MonoBehaviour
         }
 
         StartCoroutine(Hitstop(3));
+
+        if (hitData.action.hitAnim == ActionData.HitAnim.Light || attackWasBlocked)
+            StartCoroutine(ShakeCamera(5, 0.015f));
+        else
+            StartCoroutine(ShakeCamera(5, 0.03f));
     }
 
-    public void OnFighterBreak(NewFighter thrownFighter, NewFighter grabbingFighter)
+    private void OnTookDamage(NewFighter fighter)
     {
-        StopAllCoroutines();
-        thrownFighter.gameObject.layer = 2;
-        grabbingFighter.gameObject.layer = 2;
-
-        // Push fighters out of each other
-        Vector3 side = thrownFighter.IsOnLeftSide ? Vector3.left : Vector3.right;
-        float raycastLength = thrownFighter.boxCollider.bounds.extents.x + grabbingFighter.boxCollider.bounds.extents.x;
-        
-        RaycastHit2D wallHit = Physics2D.Raycast(thrownFighter.transform.position, side, raycastLength * 1.1f);
-        
-        grabbingFighter.controller.Move(side * -10);
-
-        thrownFighter.animator.Play("Base Layer.HitLight", -1, 0f);
-        thrownFighter.SwitchState(new Stunned(thrownFighter, 20));
-
-        grabbingFighter.animator.Play("Base Layer.HitLight", -1, 0f);
-        grabbingFighter.SwitchState(new Stunned(grabbingFighter, 20));
-
-        thrownFighter.gameObject.layer = 6;
-        grabbingFighter.gameObject.layer = 6;
-    }
-
-    private void UpdateSides()
-    {
-        if (fighters.Length != 2)
-            return;
-
-        if (fighters[0].transform.position.x - fighters[0].boxCollider.bounds.extents.x + 0.015f > fighters[1].transform.position.x)
+        if (fighter == fighters[0])
         {
-            if (fighters[0].currentState is Walking)
-                fighters[0].SwitchSide(false, true);
-            if (fighters[1].currentState is Walking)
-                fighters[1].SwitchSide(true, true);
+            fighterHealthBars[0].fillAmount = Mathf.Max((float)fighter.currentHealth / fighter.maxHealth, 0f);
         }
-        else if (fighters[0].transform.position.x + fighters[0].boxCollider.bounds.extents.x - 0.015f < fighters[1].transform.position.x)
+        else if (fighter == fighters[1])
         {
-            if (fighters[0].currentState is Walking)
-                fighters[0].SwitchSide(true, true);
-            if (fighters[1].currentState is Walking)
-                fighters[1].SwitchSide(false, true);
+            fighterHealthBars[1].fillAmount = Mathf.Max((float)fighter.currentHealth / fighter.maxHealth, 0f);
         }
     }
 
@@ -173,40 +188,6 @@ public class FightManager : MonoBehaviour
         opponent.ClearHitThisFrame();
     }
 
-    private void OnSpawnProjectile(NewFighter fighter, ProjectileData data)
-    {
-        Vector3 offset = new Vector3(data.offset.x * (fighter.IsOnLeftSide ? 1 : -1), data.offset.y, 0f);
-        Quaternion rotation = Quaternion.Euler(0f, (fighter.IsOnLeftSide ? 0f : 180f), 0f);
-        Projectile projectile = Object.Instantiate(data.projectilePrefab, fighter.transform.position + offset, rotation).GetComponent<Projectile>();
-        projectile.Init(fighter);
-        projectile.ProjectileDestroyed.AddListener(OnProjectileDestroyed);
-        projectiles.Add(projectile);
-    }
-
-    private void OnProjectileDestroyed(Projectile projectile)
-    {
-        projectiles.Remove(projectile);
-    }
-
-    private void HitFighter(NewFighter fighter, NewFighter opponent, ActionData action, CollisionBox hitCollisionBox, int hitStun, int blockStun)
-    {
-        Vector3 side = fighter.IsOnLeftSide ? Vector3.left : Vector3.right;
-        RaycastHit2D wallHit = Physics2D.Raycast(fighter.boxCollider.bounds.center + side * fighter.boxCollider.bounds.extents.x * 0.95f, side, action.pushback);
-        if (wallHit)
-            opponent.controller.Move(side * -1f * action.pushback);
-        else
-            fighter.controller.Move(side * action.pushback);
-
-        Vector3 particlePos = fighter.boxCollider.bounds.center - side * fighter.boxCollider.bounds.extents.x;
-        particlePos.y = hitCollisionBox.Center.y;
-        if (!fighter.blocking)
-            Instantiate(hitParticlePrefab, particlePos, Quaternion.identity);
-        else
-            Instantiate(blockParticlePrefab, particlePos, Quaternion.Euler(0f, fighter.IsOnLeftSide ? -66f : 66f, 0f));
-
-        fighter.GetHit(action, hitStun, blockStun);
-    }
-
     public void ThrowFighter(NewFighter fighter, NewFighter opponent, ActionData action)
     {
         opponent.currentThrow = action.throwData;
@@ -224,195 +205,32 @@ public class FightManager : MonoBehaviour
     private IEnumerator DelayedThrowInitialOffset(NewFighter fighter, Vector3 offset)
     {
         offset = !fighter.IsOnLeftSide ? offset : -offset;
-        
+
         fighter.model.transform.Translate(fighter.model.transform.InverseTransformVector(offset));
         yield return null;
         fighter.model.transform.Translate(fighter.model.transform.InverseTransformVector(-offset));
     }
 
-    /*
-    private void CheckForHits()
+    private void UpdateSides()
     {
         if (fighters.Length != 2)
             return;
 
-        //Check for hits
-        bool[] hitThisFrame = new bool[2];
-        CollisionBox[] hitCollisionBoxes = new CollisionBox[2];
-        for (int i = 0; i < 2; i++)
+        if (fighters[0].transform.position.x - fighters[0].boxCollider.bounds.extents.x + 0.015f > fighters[1].transform.position.x)
         {
-            for (int j = 0; j < 2; j++)
-            {
-                if (i == j)
-                    continue;
-
-                foreach (CollisionBox hitbox in fighters[i].currentHitboxes)
-                {
-                    foreach (CollisionBox hurtbox in fighters[j].currentHurtboxes)
-                    {
-                        if (hitbox.Overlaps(hurtbox))
-                        {
-                            hitThisFrame[j] = true;
-                            hitCollisionBoxes[i] = hitbox;
-                            break;
-                        }
-                    }
-
-                    if (hitThisFrame[j])
-                        break;
-                }
-            }
+            if (fighters[0].currentState is Walking)
+                fighters[0].SwitchSide(false, true);
+            if (fighters[1].currentState is Walking)
+                fighters[1].SwitchSide(true, true);
         }
-
-        // Apply hit to fighters/trade hits if attacks collide.
-        ActionData fighterAAction = fighters[0].currentAction;
-        int fighterAHitStunFrames = (fighterAAction != null) ? fighters[0].currentAction.numberOfFrames - fighters[0].currentFrame + fighters[0].currentAction.hitAdv : 0;
-        int fighterABlockStunFrames = (fighterAAction != null) ? fighters[0].currentAction.numberOfFrames - fighters[0].currentFrame + fighters[0].currentAction.blockAdv : 0;
-
-        ActionData fighterBAction = fighters[1].currentAction;
-        int fighterBHitStunFrames = (fighterBAction != null) ? fighters[1].currentAction.numberOfFrames - fighters[1].currentFrame + 1 + fighters[1].currentAction.hitAdv : 0;
-        int fighterBBlockStunFrames = (fighterBAction != null) ? fighters[1].currentAction.numberOfFrames - fighters[1].currentFrame + 1 + fighters[1].currentAction.blockAdv : 0;
-
-        if (hitThisFrame[1] && !hitThisFrame[0] || (hitThisFrame[1] && hitThisFrame[0] && fighterAAction.type > fighterBAction.type))
+        else if (fighters[0].transform.position.x + fighters[0].boxCollider.bounds.extents.x - 0.015f < fighters[1].transform.position.x)
         {
-            fighters[0].actionHasHit = true;
-            
-            if (fighterAAction.type == ActionData.Type.Light || fighterAAction.type == ActionData.Type.Heavy || fighterAAction.type == ActionData.Type.Special)
-            {
-                HitFighter(fighters[1], fighters[0], fighterAAction, hitCollisionBoxes[0], fighterAHitStunFrames, fighterABlockStunFrames);
-                hitstopTimer = 3;
-            }
-            else if (fighterAAction.type == ActionData.Type.Grab)
-            {
-                if (fighters[1].currentState is Walking || fighters[1].currentState is Attacking)
-                {
-                    ThrowFighter(fighters[1], fighters[0], fighterAAction);
-                }                
-            }
+            if (fighters[0].currentState is Walking)
+                fighters[0].SwitchSide(true, true);
+            if (fighters[1].currentState is Walking)
+                fighters[1].SwitchSide(false, true);
         }
-        else if (hitThisFrame[0] && !hitThisFrame[1] || (hitThisFrame[0] && hitThisFrame[1] && fighterBAction.type > fighterAAction.type))
-        {
-            fighters[1].actionHasHit = true;
-
-            if (fighterBAction.type == ActionData.Type.Light || fighterBAction.type == ActionData.Type.Heavy || fighterBAction.type == ActionData.Type.Special)
-            {
-                HitFighter(fighters[0], fighters[1], fighterBAction, hitCollisionBoxes[1], fighterBHitStunFrames, fighterBBlockStunFrames);
-                hitstopTimer = 3;
-            }
-            else if (fighterBAction.type == ActionData.Type.Grab)
-            {
-                if (fighters[0].currentState is Walking || fighters[0].currentState is Attacking)
-                {
-                    ThrowFighter(fighters[0], fighters[1], fighterBAction);
-                }
-            }
-        }
-        else if (hitThisFrame[0] && hitThisFrame[1])
-        {
-            if (fighterAAction.type != ActionData.Type.Grab && fighterBAction.type != ActionData.Type.Grab)
-            {
-                fighters[0].actionHasHit = true;
-                fighters[1].actionHasHit = true;
-
-                HitFighter(fighters[1], fighters[0], fighterAAction, hitCollisionBoxes[0], fighterAHitStunFrames, fighterABlockStunFrames);
-                HitFighter(fighters[0], fighters[1], fighterBAction, hitCollisionBoxes[1], fighterBHitStunFrames, fighterBBlockStunFrames);
-                hitstopTimer = 3;
-            }
-            else
-            {
-                OnBreakThrow();
-            }
-        }
-    }
-    
-    private void CheckProjectiles()
-    {
-        if (fighters.Length != 2)
-            return;
-
-        fighters[0].canSpawnProjectile = true;
-        fighters[1].canSpawnProjectile = true;
-
-        for (int i = 0; i < projectiles.Count; i++)
-        {
-            if (projectiles[i] == null)
-                continue;
-
-            CollisionBox projectileHitbox = new CollisionBox(projectiles[i].boxCollider.bounds.center, projectiles[i].boxCollider.size);
-
-            if (projectiles[i].owner == fighters[0])
-            {
-                fighters[0].canSpawnProjectile = false;
-
-                
-                foreach (CollisionBox hurtbox in fighters[1].currentHurtboxes)
-                {
-                    if (projectileHitbox.Overlaps(hurtbox))
-                    {
-                        Vector3 side = fighters[1].IsOnLeftSide ? Vector3.left : Vector3.right;
-                        Vector3 particlePos = fighters[1].boxCollider.bounds.center - side * fighters[1].boxCollider.bounds.extents.x;
-                        if (!fighters[1].blocking)
-                            Instantiate(hitParticlePrefab, particlePos, Quaternion.identity);
-                        else
-                            Instantiate(blockParticlePrefab, particlePos, Quaternion.Euler(0f, fighters[1].IsOnLeftSide ? -66f : 66f, 0f));
-
-                        fighters[1].GetHit(projectiles[i].action, projectiles[i].action.hitAdv, projectiles[i].action.blockAdv);
-                        Destroy(projectiles[i].gameObject);
-                        projectiles[i] = null;
-                        break;
-                    }
-                }
-            }
-            else if (projectiles[i].owner == fighters[1])
-            {
-                fighters[1].canSpawnProjectile = false;
-
-                foreach (CollisionBox hurtbox in fighters[0].currentHurtboxes)
-                {
-                    if (projectileHitbox.Overlaps(hurtbox))
-                    {
-                        Vector3 side = fighters[0].IsOnLeftSide ? Vector3.left : Vector3.right;
-                        Vector3 particlePos = fighters[0].boxCollider.bounds.center - side * fighters[0].boxCollider.bounds.extents.x;
-                        if (!fighters[0].blocking)
-                            Instantiate(hitParticlePrefab, particlePos, Quaternion.identity);
-                        else
-                            Instantiate(blockParticlePrefab, particlePos, Quaternion.Euler(0f, fighters[0].IsOnLeftSide ? -66f : 66f, 0f));
-
-                        fighters[0].GetHit(projectiles[i].action, projectiles[i].action.hitAdv, projectiles[i].action.blockAdv);
-                        Destroy(projectiles[i].gameObject);
-                        projectiles[i] = null;
-                        break;
-                    }
-                }
-            }
-
-            for (int k = 0; k < projectiles.Count; k++)
-            {
-                if (projectiles[i] == projectiles[k] || projectiles[k] == null)
-                    continue;
-
-                CollisionBox kHitbox = new CollisionBox(projectiles[k].boxCollider.bounds.center, projectiles[k].boxCollider.size);
-                if (projectileHitbox.Overlaps(kHitbox))
-                {
-                    Destroy(projectiles[i].gameObject);
-                    projectiles[i] = null;
-
-                    Destroy(projectiles[k].gameObject);
-                    projectiles[k] = null;
-                    break;
-                }
-            }
-        }
-
-        List<Projectile> filteredProjectiles = new List<Projectile>();
-        foreach (Projectile projectile in projectiles)
-        {
-            if (projectile != null)
-                filteredProjectiles.Add(projectile);
-        }
-        projectiles = filteredProjectiles;
-    }
-    */
+    }    
 
     private void Push()
     {
@@ -439,7 +257,7 @@ public class FightManager : MonoBehaviour
             {
                 Vector2 vBoxCenter = fighters[i].boxCollider.bounds.center;
                 vBoxCenter.y -= fighters[i].boxCollider.bounds.extents.y + VerticalOverlapBoxHeight / 2f;
-                Collider2D[] overlappingColliders = Physics2D.OverlapBoxAll(vBoxCenter, new Vector2(fighters[i].boxCollider.bounds.extents.x * 2.2f, VerticalOverlapBoxHeight), 0);
+                Collider2D[] overlappingColliders = Physics2D.OverlapBoxAll(vBoxCenter, new Vector2(fighters[i].boxCollider.bounds.extents.x * 2f + 0.015f, VerticalOverlapBoxHeight), 0);
                 foreach (Collider2D col in overlappingColliders)
                 {
                     if (col.transform == fighters[1 - i].transform)

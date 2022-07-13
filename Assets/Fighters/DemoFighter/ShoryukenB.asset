@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7a58a6bd2aded428f23737e7cedd00, type: 3}
+  m_Name: ShoryukenB
+  m_EditorClassIdentifier: 
+  actionName: ShoryukenB
+  alwaysCancelable: 0
+  airOkay: 0
+  stopOnLanding: 0
+  numberOfFrames: 54
+  animationName: Shoryuken
+  bufferLimit: 15
+  damage: 13
+  knockdown: 1
+  type: 4
+  hitAnim: 1
+  hitAdv: 0
+  blockAdv: -35
+  pushback: 0.8
+  throwData: {fileID: 0}
+  validMotions:
+  - inputs:
+    - 6
+    - 2
+    - 3b
+  - inputs:
+    - 6
+    - 2
+    - 3
+    - 5b
+  - inputs:
+    - 6
+    - 2
+    - 3
+    - 6b
+  hurtboxes:
+  - startEndFrames: {x: 6, y: 52}
+    useBaseCollider: 1
+    offset: {x: 0, y: 0}
+    size: {x: 0, y: 0}
+  hitboxes:
+  - startEndFrames: {x: 7, y: 8}
+    offset: {x: 0.6, y: -0.07}
+    size: {x: 0.64, y: 1.92}
+  - startEndFrames: {x: 8, y: 27}
+    offset: {x: 0.54, y: 1.1}
+    size: {x: 1, y: 1.19}
+  movements:
+  - frame: 1
+    movementType: 0
+    movement: {x: 7, y: 0}
+    setZeroes: 0
+  - frame: 9
+    movementType: 0
+    movement: {x: 0, y: 22}
+    setZeroes: 0
+  - frame: 12
+    movementType: 0
+    movement: {x: 0, y: 19}
+    setZeroes: 1
+  - frame: 9
+    movementType: 1
+    movement: {x: 0, y: -60}
+    setZeroes: 0
+  cancels: []
+  projectiles: []

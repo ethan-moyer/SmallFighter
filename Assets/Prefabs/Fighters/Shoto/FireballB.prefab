@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -6801922308802913012}
   - component: {fileID: 1553390517478759995}
   m_Layer: 10
-  m_Name: Fireball
+  m_Name: FireballB
   m_TagString: ProjectileBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,8 +94,8 @@ MonoBehaviour:
   ProjectileDestroyed:
     m_PersistentCalls:
       m_Calls: []
-  action: {fileID: 11400000, guid: 1cb7ede3878d0494f85d6e91338ccbbd, type: 2}
-  velocity: {x: 8, y: 0, z: 0}
+  action: {fileID: 11400000, guid: 7f9b2f907dda7fa44a80a250a61bbbf4, type: 2}
+  velocity: {x: 12, y: 0, z: 0}
 --- !u!1 &7228723992556564270
 GameObject:
   m_ObjectHideFlags: 0

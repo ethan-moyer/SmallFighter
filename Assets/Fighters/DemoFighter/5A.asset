@@ -16,7 +16,7 @@ MonoBehaviour:
   alwaysCancelable: 0
   airOkay: 0
   stopOnLanding: 0
-  numberOfFrames: 14
+  numberOfFrames: 16
   animationName: 5A
   bufferLimit: 5
   damage: 3
@@ -35,7 +35,7 @@ MonoBehaviour:
   - inputs:
     - 6a
   hurtboxes:
-  - startEndFrames: {x: 1, y: 14}
+  - startEndFrames: {x: 1, y: 16}
     useBaseCollider: 1
     offset: {x: 0, y: 0}
     size: {x: 0, y: 0}
@@ -53,8 +53,9 @@ MonoBehaviour:
     movement: {x: 0, y: 0}
     setZeroes: 1
   cancels:
-  - startEndFrames: {x: 7, y: 14}
+  - startEndFrames: {x: 7, y: 16}
     onHit: 1
     onBlock: 1
     actions:
     - 5B
+  projectiles: []

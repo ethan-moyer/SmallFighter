@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7a58a6bd2aded428f23737e7cedd00, type: 3}
+  m_Name: FireballB
+  m_EditorClassIdentifier: 
+  actionName: FireballB
+  alwaysCancelable: 0
+  airOkay: 0
+  stopOnLanding: 0
+  numberOfFrames: 45
+  animationName: Hadouken
+  bufferLimit: 15
+  damage: 0
+  knockdown: 0
+  type: 4
+  hitAnim: 0
+  hitAdv: 0
+  blockAdv: 0
+  pushback: 0
+  throwData: {fileID: 0}
+  validMotions:
+  - inputs:
+    - 2
+    - 3
+    - 6b
+  - inputs:
+    - 2
+    - 3
+    - 6
+    - 5b
+  - inputs:
+    - 2
+    - 3b
+    - 6
+  hurtboxes:
+  - startEndFrames: {x: 1, y: 14}
+    useBaseCollider: 1
+    offset: {x: 0, y: 0}
+    size: {x: 0, y: 0}
+  - startEndFrames: {x: 5, y: 8}
+    useBaseCollider: 0
+    offset: {x: 0.79, y: 0.4}
+    size: {x: 1.28, y: 0.56}
+  hitboxes: []
+  movements:
+  - frame: 1
+    movementType: 0
+    movement: {x: 0, y: 0}
+    setZeroes: 1
+  cancels: []
+  projectiles:
+  - frame: 12
+    offset: {x: 0, y: 0.2}
+    projectilePrefab: {fileID: 5231894792140452649, guid: e621bb21aaae7f441ab27830fa0c3591, type: 3}

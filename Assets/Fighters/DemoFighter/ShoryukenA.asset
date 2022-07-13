@@ -19,7 +19,7 @@ MonoBehaviour:
   numberOfFrames: 44
   animationName: Shoryuken
   bufferLimit: 15
-  damage: 0
+  damage: 10
   knockdown: 1
   type: 4
   hitAnim: 1

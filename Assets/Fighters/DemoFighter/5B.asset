@@ -18,8 +18,8 @@ MonoBehaviour:
   stopOnLanding: 0
   numberOfFrames: 31
   animationName: 5B
-  bufferLimit: 10
-  damage: 9
+  bufferLimit: 15
+  damage: 7
   knockdown: 0
   type: 1
   hitAnim: 1
@@ -47,11 +47,11 @@ MonoBehaviour:
     size: {x: 0, y: 0}
   - startEndFrames: {x: 8, y: 14}
     useBaseCollider: 0
-    offset: {x: 1.03, y: 0.39}
+    offset: {x: 0.93, y: 0.39}
     size: {x: 1.02, y: 0.54}
   hitboxes:
   - startEndFrames: {x: 8, y: 10}
-    offset: {x: 1.1, y: 0.4}
+    offset: {x: 1, y: 0.4}
     size: {x: 0.67, y: 0.42}
   movements:
   - frame: 1
@@ -64,4 +64,7 @@ MonoBehaviour:
     onBlock: 1
     actions:
     - ShoryukenA
+    - ShoryukenB
+    - FireballA
+    - FireballB
   projectiles: []
