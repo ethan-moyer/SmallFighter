@@ -45,22 +45,46 @@ public class Walking : FighterState
             }
             case 7:
             {
-                Vector3 jumpVelocity = Vector3.up * fighter.verticalJumpSpeed;
-                jumpVelocity.x = fighter.IsOnLeftSide ? -fighter.horizontalJumpSpeed : fighter.horizontalJumpSpeed;
-                fighter.SwitchState(new Jumping(fighter, jumpVelocity));
+                if (currentInput.jumpPressed)
+                {
+                    Vector3 jumpVelocity = Vector3.up * fighter.verticalJumpSpeed;
+                    jumpVelocity.x = fighter.IsOnLeftSide ? -fighter.horizontalJumpSpeed : fighter.horizontalJumpSpeed;
+                    fighter.SwitchState(new Jumping(fighter, jumpVelocity));
+                }
+                else
+                {
+                    fighter.blocking = true;
+                    fighter.velocity = fighter.IsOnLeftSide ? (Vector3.left * fighter.backwardWalkSpeed) : (Vector3.right * fighter.backwardWalkSpeed);
+                    fighter.animator.Play("Base Layer.WalkBackward");
+                }
                 break;
             }
             case 9:
             {
-                Vector3 jumpVelocity = Vector3.up * fighter.verticalJumpSpeed;
-                jumpVelocity.x = fighter.IsOnLeftSide ? fighter.horizontalJumpSpeed : -fighter.horizontalJumpSpeed;
-                fighter.SwitchState(new Jumping(fighter, jumpVelocity));
+                if (currentInput.jumpPressed)
+                {
+                    Vector3 jumpVelocity = Vector3.up * fighter.verticalJumpSpeed;
+                    jumpVelocity.x = fighter.IsOnLeftSide ? fighter.horizontalJumpSpeed : -fighter.horizontalJumpSpeed;
+                    fighter.SwitchState(new Jumping(fighter, jumpVelocity));
+                }
+                else
+                {
+                    fighter.velocity = fighter.IsOnLeftSide ? (Vector3.right * fighter.forwardWalkSpeed) : (Vector3.left * fighter.forwardWalkSpeed);
+                    fighter.animator.Play("Base Layer.WalkForward");
+                }
                 break;
             }
             case 8:
             {
-                Vector3 jumpVelocity = Vector3.up * fighter.verticalJumpSpeed;
-                fighter.SwitchState(new Jumping(fighter, jumpVelocity));
+                if (currentInput.jumpPressed)
+                {
+                    Vector3 jumpVelocity = Vector3.up * fighter.verticalJumpSpeed;
+                    fighter.SwitchState(new Jumping(fighter, jumpVelocity));
+                }
+                else
+                {
+                    fighter.animator.Play("Base Layer.Idle");
+                }
                 break;
             }
         }

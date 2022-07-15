@@ -14,14 +14,21 @@ public class FightManager : MonoBehaviour
     [SerializeField] private GameObject hitParticlePrefab;
     [SerializeField] private GameObject blockParticlePrefab;
     [SerializeField] private GameObject breakParticlePrefab;
+    [SerializeField] private bool trainingMode;
 
     [Header("GUI")]
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private Image[] fighterHealthBars;
     [SerializeField] private GameObject[] fighterRoundIcons;
+    [SerializeField] private Animator roundAnimator;
+    [SerializeField] private TextMeshProUGUI roundText;
+    [SerializeField] private GameObject KOText;
 
-    private int hitstopTimer;
-    private List<Projectile> projectiles;
+    private bool hitstopActive;
+    private bool roundOver;
+    private Coroutine[] regenCoroutines;
+    private int[] roundsWon;
+    private int roundNum;
 
     private void Awake()
     {
@@ -34,38 +41,166 @@ public class FightManager : MonoBehaviour
             instance = this;
         }
 
-        foreach (NewFighter fighter in fighters)
-        {
-            fighter.BreakThrow.AddListener(OnBreakThrow);
-            fighter.TookDamage.AddListener(OnTookDamage);
-        }
-        projectiles = new List<Projectile>();
         Application.targetFrameRate = 60;
     }
 
     private void Start()
     {
-        StartCoroutine(Timer());
+        foreach (NewFighter fighter in fighters)
+        {
+            fighter.BreakThrow.AddListener(OnBreakThrow);
+            fighter.TookDamage.AddListener(OnTookDamage);
+        }
+
+        regenCoroutines = new Coroutine[2];
+        roundsWon = new int[2];
+        roundNum = 1;
+
+        if (!trainingMode)
+        {
+            StartCoroutine(StartRound());
+        }
     }
 
     private void Update()
     {
-        if (hitstopTimer > 0)
-        {
-            fighters[0].PauseFighter();
-            fighters[1].PauseFighter();
-            hitstopTimer -= 1;
-            if (hitstopTimer == 0)
-            {
-                fighters[0].UnpauseFighter();
-                fighters[1].UnpauseFighter();
-            }
-        }
-        else
+        if (!hitstopActive)
         {
             UpdateSides();
             Push();
         }
+    }
+
+    private void LateUpdate()
+    {
+        if (!trainingMode && !roundOver)
+        {
+            if (fighters[0].currentHealth > 0 && fighters[1].currentHealth <= 0)
+            {
+                roundsWon[0] += 1;
+                roundNum += 1;
+
+                if (roundsWon[0] == 1)
+                {
+                    fighterRoundIcons[0].SetActive(true);
+                }
+                else if (roundsWon[0] == 2)
+                {
+                    fighterRoundIcons[1].SetActive(true);
+                    print("Fighter 1 wins!");
+                }
+                StartCoroutine(EndRoundKO());
+            }
+            else if (fighters[0].currentHealth <= 0 && fighters[1].currentHealth > 0)
+            {
+                roundsWon[1] += 1;
+                roundNum += 1;
+
+                if (roundsWon[1] == 1)
+                {
+                    fighterRoundIcons[2].SetActive(true);
+                }
+                else if (roundsWon[1] == 2)
+                {
+                    fighterRoundIcons[3].SetActive(true);
+                    print("Fighter 2 wins!");
+                }
+
+                ResetRound();
+            }
+            else if (fighters[0].currentHealth <= 0 && fighters[1].currentHealth <= 0)
+            {
+                roundsWon[0] += 1;
+                roundsWon[1] += 1;
+                roundNum += 1;
+
+                if (roundsWon[0] == 2 && roundsWon[1] != 2)
+                {
+                    print("Fighter 1 wins!");
+                }
+                else if (roundsWon[0] != 2 && roundsWon[1] == 2)
+                {
+                    print("Fighter 2 wins!");
+                }
+                else if (roundsWon[0] == 2 && roundsWon[1] == 2)
+                {
+                    print("Draw!");
+                }
+
+                ResetRound();
+            }
+        }
+    }
+
+    private void ResetRound()
+    {
+        StopAllCoroutines();
+
+        for (int i = 0; i < 2; i++)
+        {
+            fighters[i].UnpauseFighter();
+            fighters[i].ResetFighter(i == 0);
+            fighterHealthBars[i].fillAmount = 1f;
+        }
+
+        foreach (GameObject projectile in GameObject.FindGameObjectsWithTag("ProjectileBox"))
+        {
+            Destroy(projectile);
+        }
+
+        foreach (GameObject particle in GameObject.FindGameObjectsWithTag("Particles"))
+        {
+            Destroy(particle);
+        }
+
+        KOText.SetActive(false);
+        timerText.text = "59";
+
+        hitstopActive = false;
+        roundOver = false;
+
+        StartCoroutine(StartRound());
+    }
+
+    private IEnumerator StartRound()
+    {
+        roundText.text = $"Round {roundNum}";
+        roundAnimator.Play("RoundStart", -1, 0f);
+        roundAnimator.Update(Time.deltaTime);
+
+        foreach (NewFighter fighter in fighters)
+            fighter.PauseFighter(false);
+
+        yield return new WaitForSeconds(roundAnimator.GetCurrentAnimatorStateInfo(0).length);
+
+        foreach (NewFighter fighter in fighters)
+            fighter.UnpauseFighter();
+
+        StartCoroutine(Timer());
+    }
+
+    private IEnumerator EndRoundKO()
+    {
+        roundOver = true;
+
+        for (int i = 0; i < 4; i++)
+            yield return null;
+
+        foreach (NewFighter fighter in fighters)
+            fighter.PauseFighter();
+
+        foreach (GameObject projectile in GameObject.FindGameObjectsWithTag("ProjectileBox"))
+            projectile.GetComponent<Projectile>().Pause();
+
+        KOText.SetActive(true);
+
+        yield return new WaitForSeconds(1f);
+
+        roundAnimator.Play("FadeOut", -1, 0f);
+        roundAnimator.Update(Time.deltaTime);
+        yield return new WaitForSeconds(roundAnimator.GetCurrentAnimatorStateInfo(0).length);
+
+        ResetRound();
     }
 
     private IEnumerator Timer()
@@ -82,7 +217,7 @@ public class FightManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ShakeCamera(int duration, float strength)
+    public IEnumerator ShakeCamera(int duration, float strength)
     {
         Vector3 startingPos = Camera.main.transform.localPosition;
         int elapsedFrames = 0;
@@ -101,8 +236,18 @@ public class FightManager : MonoBehaviour
         Camera.main.transform.localPosition = startingPos;
     }
 
+    private IEnumerator RegenHealth(int fighterIndex)
+    {
+        for (int i = 0; i < 60; i++)
+            yield return null;
+
+        fighters[fighterIndex].currentHealth = fighters[fighterIndex].maxHealth;
+        fighterHealthBars[fighterIndex].fillAmount = 1f;
+    }
+
     private IEnumerator Hitstop(int numOfFrames)
     {
+        hitstopActive = true;
         foreach (NewFighter fighter in fighters)
             fighter.PauseFighter();
 
@@ -111,6 +256,7 @@ public class FightManager : MonoBehaviour
             yield return null;
         }
 
+        hitstopActive = false;
         foreach (NewFighter fighter in fighters)
             fighter.UnpauseFighter();
     }
@@ -159,10 +305,22 @@ public class FightManager : MonoBehaviour
         if (fighter == fighters[0])
         {
             fighterHealthBars[0].fillAmount = Mathf.Max((float)fighter.currentHealth / fighter.maxHealth, 0f);
+            if (trainingMode)
+            {
+                if (regenCoroutines[0] != null)
+                    StopCoroutine(regenCoroutines[0]);
+                regenCoroutines[0] = StartCoroutine(RegenHealth(0));
+            }
         }
         else if (fighter == fighters[1])
         {
             fighterHealthBars[1].fillAmount = Mathf.Max((float)fighter.currentHealth / fighter.maxHealth, 0f);
+            if (trainingMode)
+            {
+                if (regenCoroutines[1] != null)
+                    StopCoroutine(regenCoroutines[1]);
+                regenCoroutines[1] = StartCoroutine(RegenHealth(1));
+            }
         }
     }
 

@@ -6,7 +6,7 @@ public class InputInterpreter
 {
     private const int BufferCapacity = 15;
 
-    private readonly List<InputData> buffer;
+    private List<InputData> buffer;
     private readonly List<ActionData> actions;
 
     public InputInterpreter(List<ActionData> actions)
@@ -14,11 +14,11 @@ public class InputInterpreter
         this.actions = actions;
 
         buffer = new List<InputData>(BufferCapacity);
-        for (int i = 0; i < BufferCapacity; i++)
-        {
-            InputData inputData = new InputData();
-            inputData.direction = 5; inputData.aPressed = false; inputData.bPressed = false; inputData.jumpPressed = false;
-        }
+    }
+
+    public void ClearBuffer()
+    {
+        buffer = new List<InputData>(BufferCapacity);
     }
 
     public List<ActionData> UpdateBuffer(InputData currentInput)
@@ -67,10 +67,5 @@ public class InputInterpreter
         }
 
         return inputsFound == motion.inputs.Length;
-    }
-
-    private bool InputIsNothing(InputData input)
-    {
-        return input.direction == 5 && !input.aPressed && !input.bPressed && !input.jumpPressed;
     }
 }

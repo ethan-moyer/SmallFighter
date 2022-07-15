@@ -18,7 +18,7 @@ MonoBehaviour:
   stopOnLanding: 0
   numberOfFrames: 31
   animationName: 5B
-  bufferLimit: 15
+  bufferLimit: 2
   damage: 7
   knockdown: 0
   type: 1

@@ -14,7 +14,7 @@ public class NewFighter : MonoBehaviour
 
     [HideInInspector] public UnityEvent<NewFighter, NewFighter> BreakThrow;
     [HideInInspector] public UnityEvent<NewFighter> TookDamage;
-    [HideInInspector] private bool paused;
+    private bool paused;
     public Controller2D controller { get; private set; }
     public PlayerInput playerInput { get; private set; }
     public BoxCollider2D boxCollider { get; private set; }
@@ -38,6 +38,7 @@ public class NewFighter : MonoBehaviour
     [Header("Components & GameObjects")]
     public GameObject model;
     [Header("Fighter Attributes")]
+    public Vector3 startingPosition;
     public int maxHealth = 100;
     public float forwardWalkSpeed = 5f;
     public float backwardWalkSpeed = 5f;
@@ -117,6 +118,34 @@ public class NewFighter : MonoBehaviour
         }
     }
 
+    public void ResetFighter(bool startOnLeftSide)
+    {
+        StopAllCoroutines();
+
+        currentHealth = maxHealth;
+        velocity = Vector3.zero;
+        shouldKnockdown = false;
+        currentAction = null;
+        beingThrown = false;
+        currentThrow = null;
+        throwOpponent = null;
+        currentFrame = 0;
+        actionHasHit = false;
+        blocking = false;
+        canSpawnProjectile = true;
+
+        gameObject.layer = 6;
+        model.layer = startOnLeftSide ? FrontLayer : BackLayer;
+
+        float x = startOnLeftSide ? startingPosition.x : -startingPosition.x;
+        transform.position = new Vector3(x, startingPosition.y, startingPosition.z);
+
+        interpreter.ClearBuffer();
+
+        SwitchState(new Walking(this));
+        animator.Play("Base Layer.Idle", -1, 0f);
+    }
+
     public void SwitchState(FighterState nextState)
     {
         if (currentState != null)
@@ -135,7 +164,6 @@ public class NewFighter : MonoBehaviour
     {        
         if (IsOnLeftSide != nowOnLeftSide)
         {
-            print("SwitchSide");
             IsOnLeftSide = nowOnLeftSide;
             SetModelLayer(nowOnLeftSide ? FrontLayer : BackLayer);
             if (delayedFlip)
@@ -347,10 +375,11 @@ public class NewFighter : MonoBehaviour
         }
     }
 
-    public void PauseFighter()
+    public void PauseFighter(bool pauseAnimator = true)
     {
         paused = true;
-        animator.enabled = false;
+        if (pauseAnimator)
+            animator.enabled = false;
     }
 
     public void UnpauseFighter()

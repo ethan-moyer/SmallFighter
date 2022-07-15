@@ -95,7 +95,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   action: {fileID: 11400000, guid: 1cb7ede3878d0494f85d6e91338ccbbd, type: 2}
-  velocity: {x: 8, y: 0, z: 0}
+  velocity: {x: 2, y: 0, z: 0}
 --- !u!1 &7228723992556564270
 GameObject:
   m_ObjectHideFlags: 0

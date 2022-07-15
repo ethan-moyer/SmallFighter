@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7111437520218882392}
   m_Layer: 9
   m_Name: Block Effect
-  m_TagString: Untagged
+  m_TagString: Particles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

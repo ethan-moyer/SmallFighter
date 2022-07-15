@@ -32,7 +32,7 @@ public class CameraFollow : MonoBehaviour
             target.y = Mathf.Max(floor, target.y);
             target.z = transform.position.z;
 
-            transform.position = Vector3.SmoothDamp(transform.position, target, ref velocity, smoothTime);
+            transform.position = Vector3.SmoothDamp(transform.position, target, ref velocity, smoothTime, Mathf.Infinity, 0.0167f);
         }
     }
 }

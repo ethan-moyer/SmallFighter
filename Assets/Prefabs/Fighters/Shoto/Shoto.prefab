@@ -222,6 +222,9 @@ MonoBehaviour:
   BreakThrow:
     m_PersistentCalls:
       m_Calls: []
+  TookDamage:
+    m_PersistentCalls:
+      m_Calls: []
   <currentHitboxes>k__BackingField:
   - {fileID: 5289392783706152659}
   - {fileID: 940107665336769928}
@@ -235,6 +238,8 @@ MonoBehaviour:
   - {fileID: 4670853928395163836}
   - {fileID: 7203119497741547597}
   model: {fileID: 4226338385615229261}
+  startingPosition: {x: -1.55, y: 0.653, z: 0}
+  maxHealth: 100
   forwardWalkSpeed: 5
   backwardWalkSpeed: 5
   horizontalJumpSpeed: 7

@@ -23,9 +23,10 @@ MonoBehaviour:
   knockdown: 0
   type: 1
   hitAnim: 0
-  hitAdv: 11
+  hitAdv: 15
   blockAdv: 2
   pushback: 0.2
+  throwData: {fileID: 0}
   validMotions:
   - inputs:
     - 4a
@@ -55,3 +56,4 @@ MonoBehaviour:
     movement: {x: 0, y: -70}
     setZeroes: 1
   cancels: []
+  projectiles: []

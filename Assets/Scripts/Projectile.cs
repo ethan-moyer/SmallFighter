@@ -46,6 +46,11 @@ public class Projectile : MonoBehaviour
         }
     }
 
+    public void Pause()
+    {
+        velocity = Vector3.zero;
+    }
+
     private void OnHitboxCollides(Collider2D col)
     {
         if (col.tag == "ProjectileBox")

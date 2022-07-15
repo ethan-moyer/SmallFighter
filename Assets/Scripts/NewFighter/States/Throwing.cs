@@ -51,7 +51,7 @@ public class Throwing : FighterState
         {
             if (fighter.beingThrown)
             {
-                if (fighter.currentFrame <= 2 && fighter.CanBreakThrow())
+                if (fighter.currentFrame <= 3 && fighter.CanBreakThrow())
                 {
                     fighter.BreakThrow.Invoke(fighter, fighter.throwOpponent);
                     return;
@@ -64,6 +64,16 @@ public class Throwing : FighterState
                     fighter.controller.Move(offset);
 
                     fighter.velocity = new Vector2(fighter.currentThrow.tossSpeed * side, 0f);
+                }
+
+                foreach (DamageData data in fighter.currentThrow.damageFrames)
+                {
+                    if (data.frame == fighter.currentFrame)
+                    {
+                        fighter.currentHealth -= data.damage;
+                        fighter.TookDamage.Invoke(fighter);
+                        FightManager.instance.StartCoroutine(FightManager.instance.ShakeCamera(5, 0.03f));
+                    }
                 }
             }
 
