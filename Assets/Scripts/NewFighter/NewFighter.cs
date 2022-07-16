@@ -101,7 +101,7 @@ public class NewFighter : MonoBehaviour
             {
                 if (actionHasHit && currentAction.type == ActionData.Type.Grab)
                 {
-                    FightManager.instance.ThrowFighter(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>(), hitThisFrame.action);
+                    //FightManager.instance.ThrowFighter(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>(), hitThisFrame.action);
                     FightManager.instance.OnBreakThrow(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>());
                 }
                 else if (!actionHasHit || currentAction.type < ActionData.Type.Grab)
