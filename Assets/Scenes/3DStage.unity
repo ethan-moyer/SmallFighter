@@ -302,7 +302,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 9.27, y: 37.51}
-  m_SizeDelta: {x: 579, y: 50}
+  m_SizeDelta: {x: 800, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &139994839
 MonoBehaviour:
@@ -324,7 +324,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: K.O.
+  m_text: TIME OVER
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 983cc718ae6d17f4ab0dd25c3a6a7f08, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 5f8829948b7bb1b43b5149b286473086, type: 2}
@@ -351,8 +351,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 505.66
-  m_fontSizeBase: 505.66
+  m_fontSize: 254
+  m_fontSizeBase: 254
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -453,10 +453,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3920262044624933350, guid: aecb86c8e1f2b5241911b3f0437f5a0e, type: 3}
-      propertyPath: maxHealth
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3920262044624933350, guid: aecb86c8e1f2b5241911b3f0437f5a0e, type: 3}
       propertyPath: <IsOnLeftSide>k__BackingField
       value: 0
       objectReference: {fileID: 0}
@@ -553,7 +549,7 @@ MonoBehaviour:
   - {fileID: 1043813879}
   roundAnimator: {fileID: 704800840}
   roundText: {fileID: 531510353}
-  KOText: {fileID: 139994837}
+  KOText: {fileID: 139994839}
 --- !u!4 &354471183
 Transform:
   m_ObjectHideFlags: 0

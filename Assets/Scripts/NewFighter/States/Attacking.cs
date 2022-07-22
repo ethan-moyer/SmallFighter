@@ -116,7 +116,10 @@ public class Attacking : FighterState
     public override void OnStateExit()
     {
         fighter.SetModelLayer(fighter.IsOnLeftSide ? NewFighter.FrontLayer : NewFighter.BackLayer);
-        fighter.currentAction = null;
-        fighter.actionHasHit = false;
+        if (!fighter.actionHasHit || fighter.currentAction.type != ActionData.Type.Grab)
+        {
+            fighter.currentAction = null;
+            fighter.actionHasHit = false;
+        }
     }
 }

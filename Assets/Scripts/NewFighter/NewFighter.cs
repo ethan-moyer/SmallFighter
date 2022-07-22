@@ -95,6 +95,7 @@ public class NewFighter : MonoBehaviour
 
     private void LateUpdate()
     {
+        print($"{gameObject.name} - {actionHasHit}");
         if (hitThisFrame != null)
         {
             if (hitThisFrame.action.type == ActionData.Type.Grab)
@@ -106,7 +107,8 @@ public class NewFighter : MonoBehaviour
                 }
                 else if (!actionHasHit || currentAction.type < ActionData.Type.Grab)
                 {
-                    FightManager.instance.ThrowFighter(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>(), hitThisFrame.action);
+                    if (currentState is Walking || currentState is Attacking)
+                        FightManager.instance.ThrowFighter(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>(), hitThisFrame.action);
                 }
             }
             else if (!actionHasHit || currentAction.type <= hitThisFrame.action.type)
@@ -155,7 +157,7 @@ public class NewFighter : MonoBehaviour
         currentState = nextState;
         if (currentState != null)
         {
-            gameObject.name = $"Fighter - {currentState.GetType().Name}";
+            //gameObject.name = $"Fighter - {currentState.GetType().Name}";
             currentState.OnStateEnter();
         }
     }
@@ -283,6 +285,7 @@ public class NewFighter : MonoBehaviour
             NewFighter owner = col.transform.parent.GetComponent<NewFighter>();
             if (owner != this)
             {
+                print("Hitbox hit");
                 actionHasHit = true;
             }
         }

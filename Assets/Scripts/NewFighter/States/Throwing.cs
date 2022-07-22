@@ -84,6 +84,8 @@ public class Throwing : FighterState
     public override void OnStateExit()
     {
         fighter.SetModelLayer(fighter.IsOnLeftSide ? NewFighter.FrontLayer : NewFighter.BackLayer);
+        fighter.currentAction = null;
+        fighter.actionHasHit = false;
         fighter.currentThrow = null;
         fighter.beingThrown = false;
         fighter.throwOpponent = null;

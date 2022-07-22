@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.VFX;
 
 public class FightManager : MonoBehaviour
 {
     private const float HorizontalOverlapBoxWidth = 0.1f;
-    private const float VerticalOverlapBoxHeight = 0.1f;
+    private const float VerticalOverlapBoxHeight = 0.2f;
 
     public static FightManager instance;
     [SerializeField] private NewFighter[] fighters = new NewFighter[2];
@@ -22,13 +23,15 @@ public class FightManager : MonoBehaviour
     [SerializeField] private GameObject[] fighterRoundIcons;
     [SerializeField] private Animator roundAnimator;
     [SerializeField] private TextMeshProUGUI roundText;
-    [SerializeField] private GameObject KOText;
+    [SerializeField] private TextMeshProUGUI KOText;
 
     private bool hitstopActive;
     private bool roundOver;
     private Coroutine[] regenCoroutines;
+    private Coroutine timerCoroutine;
     private int[] roundsWon;
     private int roundNum;
+
 
     private void Awake()
     {
@@ -80,32 +83,25 @@ public class FightManager : MonoBehaviour
                 roundsWon[0] += 1;
                 roundNum += 1;
 
-                if (roundsWon[0] == 1)
+                if (roundsWon[0] == 2)
                 {
-                    fighterRoundIcons[0].SetActive(true);
-                }
-                else if (roundsWon[0] == 2)
-                {
-                    fighterRoundIcons[1].SetActive(true);
                     print("Fighter 1 wins!");
                 }
-                StartCoroutine(EndRoundKO());
+
+                UpdateRoundIcons();
+                StartCoroutine(EndRound("K.O."));
             }
             else if (fighters[0].currentHealth <= 0 && fighters[1].currentHealth > 0)
             {
                 roundsWon[1] += 1;
                 roundNum += 1;
-
-                if (roundsWon[1] == 1)
+                
+                if (roundsWon[1] == 2)
                 {
-                    fighterRoundIcons[2].SetActive(true);
-                }
-                else if (roundsWon[1] == 2)
-                {
-                    fighterRoundIcons[3].SetActive(true);
                     print("Fighter 2 wins!");
                 }
 
+                UpdateRoundIcons();
                 ResetRound();
             }
             else if (fighters[0].currentHealth <= 0 && fighters[1].currentHealth <= 0)
@@ -127,8 +123,30 @@ public class FightManager : MonoBehaviour
                     print("Draw!");
                 }
 
+                UpdateRoundIcons();
                 ResetRound();
             }
+        }
+    }
+
+    private void UpdateRoundIcons()
+    {
+        if (roundsWon[0] == 1)
+        {
+            fighterRoundIcons[0].SetActive(true);
+        }
+        else if (roundsWon[0] == 2)
+        {
+            fighterRoundIcons[1].SetActive(true);
+        }
+
+        if (roundsWon[1] == 1)
+        {
+            fighterRoundIcons[2].SetActive(true);
+        }
+        else if (roundsWon[1] == 2)
+        {
+            fighterRoundIcons[3].SetActive(true);
         }
     }
 
@@ -153,7 +171,7 @@ public class FightManager : MonoBehaviour
             Destroy(particle);
         }
 
-        KOText.SetActive(false);
+        KOText.gameObject.SetActive(false);
         timerText.text = "59";
 
         hitstopActive = false;
@@ -176,11 +194,13 @@ public class FightManager : MonoBehaviour
         foreach (NewFighter fighter in fighters)
             fighter.UnpauseFighter();
 
-        StartCoroutine(Timer());
+        timerCoroutine = StartCoroutine(Timer());
     }
 
-    private IEnumerator EndRoundKO()
+    private IEnumerator EndRound(string text)
     {
+        if (timerCoroutine != null)
+            StopCoroutine(timerCoroutine);
         roundOver = true;
 
         for (int i = 0; i < 4; i++)
@@ -190,9 +210,22 @@ public class FightManager : MonoBehaviour
             fighter.PauseFighter();
 
         foreach (GameObject projectile in GameObject.FindGameObjectsWithTag("ProjectileBox"))
+        {
             projectile.GetComponent<Projectile>().Pause();
+        }
 
-        KOText.SetActive(true);
+        foreach (GameObject particle in GameObject.FindGameObjectsWithTag("Particles"))
+        {
+            particle.GetComponent<DespawnAfterTime>().StopAllCoroutines();
+            particle.GetComponent<VisualEffect>().pause = true;
+        }
+
+        KOText.text = text;
+        if (text == "K.O.")
+            KOText.fontSize = 505;
+        else if (text == "Time Over")
+            KOText.fontSize = 254;
+        KOText.gameObject.SetActive(true);
 
         yield return new WaitForSeconds(1f);
 
@@ -205,16 +238,30 @@ public class FightManager : MonoBehaviour
 
     private IEnumerator Timer()
     {
-        int timeRemaining = 60;
+        int timeRemaining = 59;
 
         while (timeRemaining > 0)
         {
+            for (int i = 0; i < 60; i++)
+                yield return null;
+
             timeRemaining -= 1;
             timerText.text = timeRemaining.ToString();
-
-            for (int i = 0; i < 60; i++)
-                yield return null;            
         }
+
+        if (fighters[0].currentHealth >= fighters[1].currentHealth)
+        {
+            roundsWon[0] += 1;
+        }
+        
+        if (fighters[0].currentHealth <= fighters[1].currentHealth)
+        {
+            roundsWon[1] += 1;
+        }
+
+        roundNum += 1;
+        UpdateRoundIcons();
+        StartCoroutine(EndRound("Time Over"));
     }
 
     public IEnumerator ShakeCamera(int duration, float strength)
@@ -397,6 +444,7 @@ public class FightManager : MonoBehaviour
 
         for (int i = 0; i < 2; i++)
         {
+
             // Horizontal Collision Checking
             Vector2 hBoxCenter = fighters[i].boxCollider.bounds.center;
             hBoxCenter.x += (fighters[i].boxCollider.bounds.extents.x + HorizontalOverlapBoxWidth / 2f) * (fighters[i].IsOnLeftSide ? 1 : -1);
@@ -407,6 +455,8 @@ public class FightManager : MonoBehaviour
                 if (col.transform == fighters[1 - i].transform && Mathf.Sign(fighters[1 - i].boxCollider.bounds.center.x - fighters[i].boxCollider.bounds.center.x) != Mathf.Sign(fighters[1 - i].velocity.x))
                 {
                     fighters[i].controller.Move(fighters[1 - i].velocity.x * (1f / 60f) * Vector3.right);
+                    if (fighters[i].currentState is Attacking && fighters[i].currentAction.airOkay)
+                        fighters[i].velocity = new Vector2(0f, fighters[i].velocity.y);
                 }
             }
 
@@ -415,12 +465,12 @@ public class FightManager : MonoBehaviour
             {
                 Vector2 vBoxCenter = fighters[i].boxCollider.bounds.center;
                 vBoxCenter.y -= fighters[i].boxCollider.bounds.extents.y + VerticalOverlapBoxHeight / 2f;
-                Collider2D[] overlappingColliders = Physics2D.OverlapBoxAll(vBoxCenter, new Vector2(fighters[i].boxCollider.bounds.extents.x * 2f + 0.015f, VerticalOverlapBoxHeight), 0);
+                Collider2D[] overlappingColliders = Physics2D.OverlapBoxAll(vBoxCenter, new Vector2(fighters[i].boxCollider.bounds.extents.x * 2f + 0.1f, VerticalOverlapBoxHeight), 0);
                 foreach (Collider2D col in overlappingColliders)
                 {
                     if (col.transform == fighters[1 - i].transform)
                     {
-                        if (fighters[i].boxCollider.bounds.center.x >= fighters[1 - i].boxCollider.bounds.center.x)
+                        if (fighters[i].boxCollider.bounds.center.x > fighters[1 - i].boxCollider.bounds.center.x)
                         {
                             float overlap = (fighters[1 - i].boxCollider.bounds.center.x + fighters[1 - i].boxCollider.bounds.extents.x) - (fighters[i].boxCollider.bounds.center.x - fighters[i].boxCollider.bounds.extents.x);
                             if (overlap != 0)
@@ -436,10 +486,10 @@ public class FightManager : MonoBehaviour
                                 }
                             }
 
-                            if (fighters[i].velocity.x < 0f)
+                            if (fighters[i].velocity.x < 0f || fighters[i].currentState is Attacking)
                                 fighters[i].velocity = new Vector2(0f, fighters[i].velocity.y);
                         }
-                        else
+                        else if (fighters[i].boxCollider.bounds.center.x < fighters[1 - i].boxCollider.bounds.center.x)
                         {
                             float overlap = (fighters[i].boxCollider.bounds.center.x + fighters[i].boxCollider.bounds.extents.x) - (fighters[1 - i].boxCollider.bounds.center.x - fighters[1 - i].boxCollider.bounds.extents.x);
                             if (overlap != 0)
@@ -455,8 +505,32 @@ public class FightManager : MonoBehaviour
                                 }
                             }
 
-                            if (fighters[i].velocity.x > 0f)
+                            if (fighters[i].velocity.x > 0f || fighters[i].currentState is Attacking)
                                 fighters[i].velocity = new Vector2(0f, fighters[i].velocity.y);
+                        }
+                        else
+                        {
+                            float overlap = fighters[i].boxCollider.bounds.extents.x + fighters[1 - i].boxCollider.bounds.extents.x;
+                            if (overlap != 0)
+                            {
+                                Vector3 raycastOrigin;
+                                if (fighters[i].IsOnLeftSide)
+                                    raycastOrigin = fighters[1 - i].boxCollider.bounds.center + Vector3.right * fighters[1 - i].boxCollider.bounds.extents.x * 0.9f;
+                                else
+                                    raycastOrigin = fighters[1 - i].boxCollider.bounds.center + Vector3.left * fighters[1 - i].boxCollider.bounds.extents.x * 0.9f;
+
+                                Vector3 raycastDir = fighters[i].IsOnLeftSide ? Vector3.right : Vector3.left;
+
+                                RaycastHit2D wallHit = Physics2D.Raycast(raycastOrigin, raycastDir, overlap * 1.5f);
+                                if (wallHit)
+                                {
+                                    fighters[1 - i].controller.Move(-1.5f * overlap * raycastDir);
+                                }
+                                else
+                                {
+                                    fighters[1 - i].controller.Move(1.5f * overlap * raycastDir);
+                                }
+                            }
                         }
                     }
                 }
