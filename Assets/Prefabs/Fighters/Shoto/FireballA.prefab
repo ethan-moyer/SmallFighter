@@ -95,7 +95,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   action: {fileID: 11400000, guid: 1cb7ede3878d0494f85d6e91338ccbbd, type: 2}
-  velocity: {x: 2, y: 0, z: 0}
+  velocity: {x: 8, y: 0, z: 0}
 --- !u!1 &7228723992556564270
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,6 +204,7 @@ VisualEffect:
       m_Array: []
 --- !u!73398921 &7228723992556564273
 VFXRenderer:
+  serializedVersion: 1
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -220,8 +221,6 @@ VFXRenderer:
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

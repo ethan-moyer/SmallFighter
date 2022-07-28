@@ -15,6 +15,7 @@ public class Stunned : FighterState
     public override void OnStateEnter()
     {
         fighter.velocity = Vector3.zero;
+        fighter.currentAction = null;
         fighter.ClearHitboxes();
         fighter.ClearHurtboxes();
         fighter.currentHurtboxes[0].Init(Vector2.zero, fighter.standingHurtbox.Extents * 2f);

@@ -10,7 +10,7 @@ public class CameraFollow : MonoBehaviour
     private GameObject[] fighters;
     private Vector3 velocity = Vector3.zero;
 
-    private void Awake()
+    private void Start()
     {
         fighters = GameObject.FindGameObjectsWithTag("Fighter");
     }

@@ -8,6 +8,7 @@ TagManager:
   - FighterBox
   - ProjectileBox
   - Particles
+  - FightManager
   layers:
   - Default
   - TransparentFX

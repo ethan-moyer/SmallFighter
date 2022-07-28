@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 3920262044624933351}
   - component: {fileID: 3920262044624933350}
   m_Layer: 6
-  m_Name: Shoto
+  m_Name: ShotoOrange
   m_TagString: Fighter
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1346,7 +1346,7 @@ PrefabInstance:
     - target: {fileID: 7724934992745567833, guid: 841f817182d9d504c88d696580cc11ac, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: b0cce328e5c33904bba2341c14d09e71, type: 2}
+      objectReference: {fileID: 2100000, guid: 0d08bbc04ca75de4b9447dc9d4470e38, type: 2}
     - target: {fileID: 8879528566716807029, guid: 841f817182d9d504c88d696580cc11ac, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -89.98021

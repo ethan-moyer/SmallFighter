@@ -11,11 +11,11 @@ public class NewCollisionBox : MonoBehaviour
     [SerializeField] private Color color;
     public BoxCollider2D boxCollider { get; private set; }
 
-
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
     }
+
     public void Init(Vector2 offset, Vector2 size)
     {
         transform.localPosition = offset;

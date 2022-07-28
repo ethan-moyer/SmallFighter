@@ -8,7 +8,7 @@ using UnityEngine.VFX;
 public class FightManager : MonoBehaviour
 {
     private const float HorizontalOverlapBoxWidth = 0.1f;
-    private const float VerticalOverlapBoxHeight = 0.2f;
+    private const float VerticalOverlapBoxHeight = 0.1f;
 
     public static FightManager instance;
     [SerializeField] private NewFighter[] fighters = new NewFighter[2];
@@ -32,7 +32,6 @@ public class FightManager : MonoBehaviour
     private int[] roundsWon;
     private int roundNum;
 
-
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -43,8 +42,18 @@ public class FightManager : MonoBehaviour
         {
             instance = this;
         }
-
         Application.targetFrameRate = 60;
+
+        if (FightLoader.instance != null)
+        {
+            fighters[0] = Instantiate(FightLoader.instance.fighterPrefabs[0]).GetComponent<NewFighter>();
+            fighters[0].playerInput.SwitchCurrentControlScheme(FightLoader.instance.controlSchemes[0], FightLoader.instance.fighterDevices[0]);
+
+            fighters[1] = Instantiate(FightLoader.instance.fighterPrefabs[1]).GetComponent<NewFighter>();
+            fighters[1].playerInput.SwitchCurrentControlScheme(FightLoader.instance.controlSchemes[1], FightLoader.instance.fighterDevices[1]);
+
+            ResetRound();
+        }
     }
 
     private void Start()
@@ -102,7 +111,7 @@ public class FightManager : MonoBehaviour
                 }
 
                 UpdateRoundIcons();
-                ResetRound();
+                StartCoroutine(EndRound("K.O."));
             }
             else if (fighters[0].currentHealth <= 0 && fighters[1].currentHealth <= 0)
             {
@@ -124,7 +133,7 @@ public class FightManager : MonoBehaviour
                 }
 
                 UpdateRoundIcons();
-                ResetRound();
+                StartCoroutine(EndRound("K.O."));
             }
         }
     }
@@ -449,14 +458,15 @@ public class FightManager : MonoBehaviour
             Vector2 hBoxCenter = fighters[i].boxCollider.bounds.center;
             hBoxCenter.x += (fighters[i].boxCollider.bounds.extents.x + HorizontalOverlapBoxWidth / 2f) * (fighters[i].IsOnLeftSide ? 1 : -1);
 
-            Collider2D[] horizontalHits = Physics2D.OverlapBoxAll(hBoxCenter, new Vector2(HorizontalOverlapBoxWidth, fighters[i].boxCollider.bounds.extents.y * 2f), 0);
+            Collider2D[] horizontalHits = Physics2D.OverlapBoxAll(hBoxCenter, new Vector2(HorizontalOverlapBoxWidth, fighters[i].boxCollider.bounds.extents.y * 2f - 0.03f), 0);
             foreach (Collider2D col in horizontalHits)
             {
                 if (col.transform == fighters[1 - i].transform && Mathf.Sign(fighters[1 - i].boxCollider.bounds.center.x - fighters[i].boxCollider.bounds.center.x) != Mathf.Sign(fighters[1 - i].velocity.x))
                 {
                     fighters[i].controller.Move(fighters[1 - i].velocity.x * (1f / 60f) * Vector3.right);
-                    if (fighters[i].currentState is Attacking && fighters[i].currentAction.airOkay)
-                        fighters[i].velocity = new Vector2(0f, fighters[i].velocity.y);
+                    //bool pastCenter = (fighters[i].IsOnLeftSide && fighters[1 - i].IsOnLeftSide) || (!fighters[i].IsOnLeftSide && !fighters[1 - i].IsOnLeftSide);
+                    //if (fighters[i].currentState is Attacking && fighters[i].currentAction.airOkay && pastCenter)
+                        //fighters[i].velocity = new Vector2(0f, fighters[i].velocity.y);
                 }
             }
 
@@ -486,7 +496,7 @@ public class FightManager : MonoBehaviour
                                 }
                             }
 
-                            if (fighters[i].velocity.x < 0f || fighters[i].currentState is Attacking)
+                            if (fighters[i].velocity.x < 0f)
                                 fighters[i].velocity = new Vector2(0f, fighters[i].velocity.y);
                         }
                         else if (fighters[i].boxCollider.bounds.center.x < fighters[1 - i].boxCollider.bounds.center.x)
@@ -505,7 +515,7 @@ public class FightManager : MonoBehaviour
                                 }
                             }
 
-                            if (fighters[i].velocity.x > 0f || fighters[i].currentState is Attacking)
+                            if (fighters[i].velocity.x > 0f)
                                 fighters[i].velocity = new Vector2(0f, fighters[i].velocity.y);
                         }
                         else

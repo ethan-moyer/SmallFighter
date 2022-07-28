@@ -77,7 +77,10 @@ public class NewFighter : MonoBehaviour
         {
             model.transform.localScale = new Vector3(model.transform.localScale.x, model.transform.localScale.y, -model.transform.localScale.z);
         }
+    }
 
+    private void Start()
+    {
         SwitchState(new Walking(this));
     }
 
@@ -95,7 +98,6 @@ public class NewFighter : MonoBehaviour
 
     private void LateUpdate()
     {
-        print($"{gameObject.name} - {actionHasHit}");
         if (hitThisFrame != null)
         {
             if (hitThisFrame.action.type == ActionData.Type.Grab)
@@ -157,7 +159,7 @@ public class NewFighter : MonoBehaviour
         currentState = nextState;
         if (currentState != null)
         {
-            //gameObject.name = $"Fighter - {currentState.GetType().Name}";
+            gameObject.name = $"Fighter - {currentState.GetType().Name}";
             currentState.OnStateEnter();
         }
     }
@@ -285,7 +287,6 @@ public class NewFighter : MonoBehaviour
             NewFighter owner = col.transform.parent.GetComponent<NewFighter>();
             if (owner != this)
             {
-                print("Hitbox hit");
                 actionHasHit = true;
             }
         }

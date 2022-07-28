@@ -5,10 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/DevicesScreen.unity
+    guid: 9ebd8f3acf651a141987eb64fbec65ef
   - enabled: 1
     path: Assets/Scenes/3DStage.unity
     guid: ba56297140547b94c8875110a2926185
+  - enabled: 1
+    path: Assets/Scenes/FightingBase.unity
+    guid: e8ec8ac353da35a4caaf1ded3cd37fef
+  - enabled: 1
+    path: Assets/Scenes/Stages/TheGrid.unity
+    guid: 114b0d02f2abc994daabd0ca2656061a
   m_configObjects: {}
