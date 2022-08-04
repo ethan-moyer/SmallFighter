@@ -5,7 +5,7 @@ using UnityEngine;
 public class Jumping : FighterState
 {
     private const int JumpStartup = 3;
-    private const int JumpRecovery = 4;
+    private const int JumpRecovery = 2;
 
     private Vector3 jumpVelocity;
     private int startupTimer;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Falling : FighterState
 {
-    private const int FallingRecovery = 4;
+    private const int FallingRecovery = 2;
     private int recoveryTimer;
     private bool landed;
 
