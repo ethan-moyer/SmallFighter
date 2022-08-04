@@ -51,6 +51,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -352,6 +353,16 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      ShingoIdle_3: 1218521406608898131
+      ShingoIdle_4: -1108568531408963859
+      ShingoIdle_7: -1250268288438145157
+      ShingoIdle_5: 7574830590437049843
+      ShingoIdle_0: 7722368364962862144
+      ShingoIdle_8: -650236380602265119
+      ShingoIdle_1: 1148040471314091016
+      ShingoIdle_6: -220860915498147861
+      ShingoIdle_2: 8934205072758001760
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
