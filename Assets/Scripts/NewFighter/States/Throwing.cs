@@ -40,6 +40,7 @@ public class Throwing : FighterState
                 if (fighter.currentThrow.tossSpeed < 0f)
                     fighter.SwitchSide(!fighter.IsOnLeftSide, false);
                 fighter.animator.Play("Rising", -1, 0f);
+                FightManager.instance.PlaySound(SoundType.Impact, fighter.audioSource);
                 fighter.SwitchState(new Knockdown(fighter));
             }
             else

@@ -24,8 +24,10 @@ MonoBehaviour:
   type: 1
   hitAnim: 1
   hitAdv: 2
-  blockAdv: -10
+  blockAdv: -12
   pushback: 0.6
+  playWhiffSound: 1
+  whiffPlayFrame: 3
   throwData: {fileID: 0}
   validMotions:
   - inputs:

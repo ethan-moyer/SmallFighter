@@ -26,6 +26,9 @@ MonoBehaviour:
   hitAdv: 16
   blockAdv: 2
   pushback: 0.1
+  playWhiffSound: 1
+  whiffPlayFrame: 2
+  throwData: {fileID: 0}
   validMotions:
   - inputs:
     - 4b
@@ -52,3 +55,4 @@ MonoBehaviour:
     movement: {x: 0, y: -70}
     setZeroes: 0
   cancels: []
+  projectiles: []

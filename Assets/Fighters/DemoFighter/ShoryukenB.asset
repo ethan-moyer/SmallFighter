@@ -26,6 +26,8 @@ MonoBehaviour:
   hitAdv: 0
   blockAdv: -35
   pushback: 0.8
+  playWhiffSound: 1
+  whiffPlayFrame: 3
   throwData: {fileID: 0}
   validMotions:
   - inputs:

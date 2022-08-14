@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Controller2D))]
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(AudioSource))]
 public class NewFighter : MonoBehaviour
 {
     public const int BackLayer = 7;
@@ -19,6 +20,7 @@ public class NewFighter : MonoBehaviour
     public PlayerInput playerInput { get; private set; }
     public BoxCollider2D boxCollider { get; private set; }
     public Animator animator { get; private set; }
+    public AudioSource audioSource { get; private set; }
     public int currentHealth { get; set; }
     public Vector3 velocity { get; set; }
     public bool onGround { get; private set; }
@@ -63,6 +65,7 @@ public class NewFighter : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         boxCollider = GetComponent<BoxCollider2D>();
         animator = model.GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
         currentHealth = maxHealth;
         velocity = Vector3.zero;
         canSpawnProjectile = true;
@@ -102,18 +105,18 @@ public class NewFighter : MonoBehaviour
         {
             if (hitThisFrame.action.type == ActionData.Type.Grab)
             {
-                if (actionHasHit && currentAction.type == ActionData.Type.Grab)
+                if (actionHasHit && currentAction != null && currentAction.type == ActionData.Type.Grab)
                 {
                     //FightManager.instance.ThrowFighter(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>(), hitThisFrame.action);
                     FightManager.instance.OnBreakThrow(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>());
                 }
-                else if (!actionHasHit || currentAction.type < ActionData.Type.Grab)
+                else if (!actionHasHit || (currentAction != null &&currentAction.type < ActionData.Type.Grab))
                 {
                     if (currentState is Walking || currentState is Attacking)
                         FightManager.instance.ThrowFighter(this, hitThisFrame.hitbox.transform.parent.GetComponent<NewFighter>(), hitThisFrame.action);
                 }
             }
-            else if (!actionHasHit || currentAction.type <= hitThisFrame.action.type)
+            else if (!actionHasHit || (currentAction != null && currentAction.type <= hitThisFrame.action.type))
             {
                 FightManager.instance.OnFighterHit(this, hitThisFrame, blocking);
                 GetHit(hitThisFrame.action, hitThisFrame.hitStun, hitThisFrame.blockStun);
@@ -222,10 +225,12 @@ public class NewFighter : MonoBehaviour
 
     public void GetHit(ActionData action, int hitStunFrames, int blockStunFrames)
     {
+        
         if (!blocking)
         {
             currentHealth -= action.damage;
             TookDamage.Invoke(this);
+            FightManager.instance.PlaySound(SoundType.Hit, audioSource);
             if (onGround)
             {
                 if (action.knockdown)
@@ -260,6 +265,7 @@ public class NewFighter : MonoBehaviour
         else
         {
             animator.Play("Base Layer.Block", -1, 0f);
+            FightManager.instance.PlaySound(SoundType.Block, audioSource);
             SwitchState(new Stunned(this, blockStunFrames));
         }
     }

@@ -22,6 +22,10 @@ public class ActionData : ScriptableObject
     public int hitAdv = 0;
     public int blockAdv = 0;
     public float pushback = 0f;
+    [Header("Audio")]
+    public bool playWhiffSound;
+    public AudioClip customWhiffSound;
+    public int whiffPlayFrame = -1;
     [Header("Throws")]
     public ThrowData throwData;
         

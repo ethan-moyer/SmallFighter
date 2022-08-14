@@ -108,6 +108,15 @@ public class Attacking : FighterState
                 }
             }
 
+            // Audio
+            if (fighter.currentAction.playWhiffSound && fighter.currentFrame == fighter.currentAction.whiffPlayFrame)
+            {
+                if (fighter.currentAction.customWhiffSound != null)
+                    fighter.audioSource.PlayOneShot(fighter.currentAction.customWhiffSound);
+                else
+                    FightManager.instance.PlaySound(SoundType.Whiff, fighter.audioSource);
+            }
+
             fighter.velocity += acceleration * 0.0167f;
             fighter.currentFrame += 1;
         }

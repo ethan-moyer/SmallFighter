@@ -5,6 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.VFX;
 
+public enum SoundType
+{
+    Hit,
+    Whiff,
+    Block,
+    Impact,
+    Break
+}
+
 public class FightManager : MonoBehaviour
 {
     private const float HorizontalOverlapBoxWidth = 0.1f;
@@ -25,6 +34,13 @@ public class FightManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI roundText;
     [SerializeField] private TextMeshProUGUI KOText;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip[] hitSounds;
+    [SerializeField] private AudioClip[] whiffSounds;
+    [SerializeField] private AudioClip[] blockSounds;
+    [SerializeField] private AudioClip[] impactSounds;
+    [SerializeField] private AudioClip breakSound;
+
     private bool hitstopActive;
     private bool roundOver;
     private Coroutine[] regenCoroutines;
@@ -41,19 +57,19 @@ public class FightManager : MonoBehaviour
         else
         {
             instance = this;
-        }
-        Application.targetFrameRate = 60;
+            Application.targetFrameRate = 60;
 
-        if (FightLoader.instance != null)
-        {
-            fighters[0] = Instantiate(FightLoader.instance.fighterPrefabs[0]).GetComponent<NewFighter>();
-            fighters[0].playerInput.SwitchCurrentControlScheme(FightLoader.instance.controlSchemes[0], FightLoader.instance.fighterDevices[0]);
+            if (FightLoader.instance != null)
+            {
+                fighters[0] = Instantiate(FightLoader.instance.fighterPrefabs[0]).GetComponent<NewFighter>();
+                fighters[0].playerInput.SwitchCurrentControlScheme(FightLoader.instance.controlSchemes[0], FightLoader.instance.fighterDevices[0]);
 
-            fighters[1] = Instantiate(FightLoader.instance.fighterPrefabs[1]).GetComponent<NewFighter>();
-            fighters[1].playerInput.SwitchCurrentControlScheme(FightLoader.instance.controlSchemes[1], FightLoader.instance.fighterDevices[1]);
+                fighters[1] = Instantiate(FightLoader.instance.fighterPrefabs[1]).GetComponent<NewFighter>();
+                fighters[1].playerInput.SwitchCurrentControlScheme(FightLoader.instance.controlSchemes[1], FightLoader.instance.fighterDevices[1]);
 
-            ResetRound();
-        }
+                ResetRound();
+            }
+        }        
     }
 
     private void Start()
@@ -317,6 +333,28 @@ public class FightManager : MonoBehaviour
             fighter.UnpauseFighter();
     }
 
+    public void PlaySound(SoundType type, AudioSource source)
+    {
+        switch (type)
+        {
+            case SoundType.Hit:
+                source.PlayOneShot(hitSounds[Random.Range(0, hitSounds.Length)]);
+                break;
+            case SoundType.Whiff:
+                source.PlayOneShot(whiffSounds[Random.Range(0, whiffSounds.Length)]);
+                break;
+            case SoundType.Block:
+                source.PlayOneShot(blockSounds[Random.Range(0, blockSounds.Length)]);
+                break;
+            case SoundType.Impact:
+                source.PlayOneShot(impactSounds[Random.Range(0, impactSounds.Length)]);
+                break;
+            case SoundType.Break:
+                source.PlayOneShot(breakSound);
+                break;
+        }
+    }
+
     public void OnFighterHit(NewFighter hitFighter, HitData hitData, bool attackWasBlocked)
     {
         Vector3 side = hitFighter.IsOnLeftSide ? Vector3.left : Vector3.right;
@@ -382,7 +420,7 @@ public class FightManager : MonoBehaviour
 
     public void OnBreakThrow(NewFighter fighter, NewFighter opponent)
     {
-        print("Throw break!");
+        PlaySound(SoundType.Break, fighter.audioSource);
 
         float offset = fighter.boxCollider.bounds.extents.x + opponent.boxCollider.bounds.extents.x;
         fighter.controller.Move(Vector3.right * (fighter.IsOnLeftSide ? -offset : offset));

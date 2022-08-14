@@ -1,34 +1,7 @@
 fileFormatVersion: 2
-guid: cad9defabf8520044b29b064bf1d8bc7
+guid: 77420770867c5aa48890e48c4e8f0fe6
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 7722368364962862144
-    second: ShingoIdle_0
-  - first:
-      213: 1148040471314091016
-    second: ShingoIdle_1
-  - first:
-      213: 8934205072758001760
-    second: ShingoIdle_2
-  - first:
-      213: 1218521406608898131
-    second: ShingoIdle_3
-  - first:
-      213: -1108568531408963859
-    second: ShingoIdle_4
-  - first:
-      213: 7574830590437049843
-    second: ShingoIdle_5
-  - first:
-      213: -220860915498147861
-    second: ShingoIdle_6
-  - first:
-      213: -1250268288438145157
-    second: ShingoIdle_7
-  - first:
-      213: -650236380602265119
-    second: ShingoIdle_8
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -60,7 +33,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 2
     mipBias: 0
     wrapU: 1
@@ -74,7 +47,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +69,7 @@ TextureImporter:
     maxTextureSize: 8192
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -108,7 +81,7 @@ TextureImporter:
     maxTextureSize: 8192
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -151,194 +124,143 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ShingoIdle_0
+      name: button_atlas (Custom)_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 320
+        width: 160
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7abf398de9c8c764fa72280749a50bbf
+      internalID: 880809250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: button_atlas (Custom)_1
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 320
+        width: 160
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5c99b2f145e1d349939e4ff65be3507
+      internalID: 874192518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: button_atlas (Custom)_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 160
+        width: 160
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6dbe456e8dd5e41478ccdd363fe8ef1f
+      internalID: -1409904314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: button_atlas (Custom)_3
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 160
+        width: 160
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7eb61e735cc9e37408a936ba12a180c2
+      internalID: 845080591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: button_atlas (Custom)_4
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 37
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        width: 160
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0445352fc1d5b2b60800000000000000
-      internalID: 7722368364962862144
+      spriteID: ffbc0099bd06df44cafbf83c29317143
+      internalID: 946765638
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ShingoIdle_1
+      name: button_atlas (Custom)_5
       rect:
         serializedVersion: 2
-        x: 37
+        x: 160
         y: 0
-        width: 37
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        width: 160
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 80cc270e9b8aeef00800000000000000
-      internalID: 1148040471314091016
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ShingoIdle_2
-      rect:
-        serializedVersion: 2
-        x: 74
-        y: 0
-        width: 37
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 060db30ad2cacfb70800000000000000
-      internalID: 8934205072758001760
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ShingoIdle_3
-      rect:
-        serializedVersion: 2
-        x: 111
-        y: 0
-        width: 37
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 358f12863ce09e010800000000000000
-      internalID: 1218521406608898131
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ShingoIdle_4
-      rect:
-        serializedVersion: 2
-        x: 148
-        y: 0
-        width: 37
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: de6313c4bc29d90f0800000000000000
-      internalID: -1108568531408963859
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ShingoIdle_5
-      rect:
-        serializedVersion: 2
-        x: 185
-        y: 0
-        width: 37
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3f543c0f9443f1960800000000000000
-      internalID: 7574830590437049843
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ShingoIdle_6
-      rect:
-        serializedVersion: 2
-        x: 222
-        y: 0
-        width: 37
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bef17f2ea285fecf0800000000000000
-      internalID: -220860915498147861
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ShingoIdle_7
-      rect:
-        serializedVersion: 2
-        x: 259
-        y: 0
-        width: 37
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b7f65b9ad9726aee0800000000000000
-      internalID: -1250268288438145157
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ShingoIdle_8
-      rect:
-        serializedVersion: 2
-        x: 296
-        y: 0
-        width: 37
-        height: 48
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1e19a2af475e9f6f0800000000000000
-      internalID: -650236380602265119
+      spriteID: f3a77ddae9e712b488be5adf8f8665a8
+      internalID: -1278169803
       vertices: []
       indices: 
       edges: []
@@ -346,7 +268,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 9804982a4d43379429f1f0584274a1f2
     internalID: 0
     vertices: []
     indices: 
@@ -354,15 +276,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      ShingoIdle_3: 1218521406608898131
-      ShingoIdle_4: -1108568531408963859
-      ShingoIdle_7: -1250268288438145157
-      ShingoIdle_5: 7574830590437049843
-      ShingoIdle_0: 7722368364962862144
-      ShingoIdle_8: -650236380602265119
-      ShingoIdle_1: 1148040471314091016
-      ShingoIdle_6: -220860915498147861
-      ShingoIdle_2: 8934205072758001760
+      button_atlas (Custom)_0: 880809250
+      button_atlas (Custom)_3: 845080591
+      button_atlas (Custom)_1: 874192518
+      button_atlas (Custom)_4: 946765638
+      button_atlas (Custom)_2: -1409904314
+      button_atlas (Custom)_5: -1278169803
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
