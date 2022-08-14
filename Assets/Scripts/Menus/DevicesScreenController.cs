@@ -15,6 +15,7 @@ public class DevicesScreenController : MonoBehaviour
 
     private List<DeviceLabelController> labelControllers;
     private PlayerInputManager inputManager;
+    private AudioSource audioSource;
     private DeviceLabelController leftSide;
     private DeviceLabelController rightSide;
 
@@ -22,6 +23,7 @@ public class DevicesScreenController : MonoBehaviour
     {
         labelControllers = new List<DeviceLabelController>();
         inputManager = GetComponent<PlayerInputManager>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -112,6 +114,7 @@ public class DevicesScreenController : MonoBehaviour
 
     private IEnumerator LerpLabel(Transform labelTransform, Vector3 endPosition, float lerpDuration)
     {
+        audioSource.Play();
         Vector3 startPosition = labelTransform.position;
         float elapsedTime = 0f;
 

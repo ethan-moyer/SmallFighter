@@ -603,6 +603,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ad286f31c8012884dbff3e58da97e23c, type: 3}
   impactSounds:
   - {fileID: 8300000, guid: 12c247b70ba52374dacec5c9f90c00ad, type: 3}
+  breakSound: {fileID: 8300000, guid: adce4156aa6cb9f4fba889d620eac2c6, type: 3}
 --- !u!4 &408207279
 Transform:
   m_ObjectHideFlags: 0
