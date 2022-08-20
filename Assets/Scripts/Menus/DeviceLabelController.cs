@@ -10,7 +10,8 @@ using static UnityEngine.InputSystem.InputAction;
 public class DeviceLabelController : MonoBehaviour
 {
     [HideInInspector] public UnityEvent<DeviceLabelController, float> MoveLabel;
-    [HideInInspector] public UnityEvent PressedEnter;
+    [HideInInspector] public UnityEvent<DeviceLabelController> PressedEnter;
+    [HideInInspector] public UnityEvent<DeviceLabelController> PressedCancel;
     [HideInInspector] public InputDevice device;
     [HideInInspector] public string controlScheme;
     public Vector3 initialPosition;
@@ -36,7 +37,15 @@ public class DeviceLabelController : MonoBehaviour
     {
         if (ctx.performed)
         {
-            PressedEnter.Invoke();
+            PressedEnter.Invoke(this);
+        }
+    }
+
+    public void OnCancel(CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            PressedCancel.Invoke(this);
         }
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.VFX;
 
@@ -27,12 +28,15 @@ public class FightManager : MonoBehaviour
     [SerializeField] private bool trainingMode;
 
     [Header("GUI")]
+    [SerializeField] private GameObject guiCanvas;
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private Image[] fighterHealthBars;
     [SerializeField] private GameObject[] fighterRoundIcons;
     [SerializeField] private Animator roundAnimator;
     [SerializeField] private TextMeshProUGUI roundText;
     [SerializeField] private TextMeshProUGUI KOText;
+    [SerializeField] private GameObject rematchCanvas;
+    [SerializeField] private TextMeshProUGUI winnerText;
 
     [Header("Audio")]
     [SerializeField] private AudioClip[] hitSounds;
@@ -107,12 +111,6 @@ public class FightManager : MonoBehaviour
             {
                 roundsWon[0] += 1;
                 roundNum += 1;
-
-                if (roundsWon[0] == 2)
-                {
-                    print("Fighter 1 wins!");
-                }
-
                 UpdateRoundIcons();
                 StartCoroutine(EndRound("K.O."));
             }
@@ -120,12 +118,6 @@ public class FightManager : MonoBehaviour
             {
                 roundsWon[1] += 1;
                 roundNum += 1;
-                
-                if (roundsWon[1] == 2)
-                {
-                    print("Fighter 2 wins!");
-                }
-
                 UpdateRoundIcons();
                 StartCoroutine(EndRound("K.O."));
             }
@@ -134,20 +126,6 @@ public class FightManager : MonoBehaviour
                 roundsWon[0] += 1;
                 roundsWon[1] += 1;
                 roundNum += 1;
-
-                if (roundsWon[0] == 2 && roundsWon[1] != 2)
-                {
-                    print("Fighter 1 wins!");
-                }
-                else if (roundsWon[0] != 2 && roundsWon[1] == 2)
-                {
-                    print("Fighter 2 wins!");
-                }
-                else if (roundsWon[0] == 2 && roundsWon[1] == 2)
-                {
-                    print("Draw!");
-                }
-
                 UpdateRoundIcons();
                 StartCoroutine(EndRound("K.O."));
             }
@@ -205,6 +183,23 @@ public class FightManager : MonoBehaviour
         StartCoroutine(StartRound());
     }
 
+    public void OnRematchPressed()
+    {
+        if (FightLoader.instance != null)
+        {
+            FightLoader.instance.LoadStage();
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+    }
+
+    public void OnQuitPressed()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     private IEnumerator StartRound()
     {
         roundText.text = $"Round {roundNum}";
@@ -254,11 +249,33 @@ public class FightManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        roundAnimator.Play("FadeOut", -1, 0f);
-        roundAnimator.Update(Time.deltaTime);
-        yield return new WaitForSeconds(roundAnimator.GetCurrentAnimatorStateInfo(0).length);
+        // Check if game is over
+        if (roundsWon[0] == 2 && roundsWon[1] < 2)
+        {
+            KOText.text = "";
+            rematchCanvas.SetActive(true);
+            winnerText.text = "Player 1 Wins!";
+        }
+        else if (roundsWon[0] < 2 && roundsWon[1] == 2)
+        {
+            KOText.text = "";
+            rematchCanvas.SetActive(true);
+            winnerText.text = "Player 2 Wins!";
+        }
+        else if (roundsWon[0] == 2 && roundsWon[1] == 2)
+        {
+            KOText.text = "";
+            rematchCanvas.SetActive(true);
+            winnerText.text = "Draw!";
+        }
+        else
+        {
+            roundAnimator.Play("FadeOut", -1, 0f);
+            roundAnimator.Update(Time.deltaTime);
+            yield return new WaitForSeconds(roundAnimator.GetCurrentAnimatorStateInfo(0).length);
 
-        ResetRound();
+            ResetRound();
+        }
     }
 
     private IEnumerator Timer()

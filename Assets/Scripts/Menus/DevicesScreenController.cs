@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(PlayerInputManager))]
@@ -68,6 +69,7 @@ public class DevicesScreenController : MonoBehaviour
 
         labelController.MoveLabel.AddListener(OnMoveLabel);
         labelController.PressedEnter.AddListener(OnPressedEnter);
+        labelController.PressedCancel.AddListener(OnPressedCancel);
 
         labelControllers.Add(labelController);
     }
@@ -128,9 +130,19 @@ public class DevicesScreenController : MonoBehaviour
         labelTransform.position = endPosition;
     }
 
-    private void OnPressedEnter()
+    private void OnPressedEnter(DeviceLabelController labelController)
     {
-        if (leftSide != null && rightSide != null)
+        if (leftSide == null && rightSide != labelController)
+        {
+            leftSide = labelController;
+            StartCoroutine(LerpLabel(labelController.transform, leftPoint.position, 0.1f));
+        }
+        else if (rightSide == null && leftSide != labelController)
+        {
+            rightSide = labelController;
+            StartCoroutine(LerpLabel(labelController.transform, rightPoint.position, 0.1f));
+        }
+        else if (leftSide != null && rightSide != null)
         {
             FightLoader.instance.fighterDevices[0] = leftSide.device;
             FightLoader.instance.fighterDevices[1] = rightSide.device;
@@ -139,6 +151,24 @@ public class DevicesScreenController : MonoBehaviour
             FightLoader.instance.controlSchemes[1] = rightSide.controlScheme;
 
             FightLoader.instance.LoadStage();
+        }
+    }
+
+    private void OnPressedCancel(DeviceLabelController labelController)
+    {
+        if (labelController == leftSide)
+        {
+            leftSide = null;
+            StartCoroutine(LerpLabel(labelController.transform, labelController.initialPosition, .1f));
+        }
+        else if (labelController == rightSide)
+        {
+            rightSide = null;
+            StartCoroutine(LerpLabel(labelController.transform, labelController.initialPosition, .1f));
+        }
+        else
+        {
+            SceneManager.LoadScene(0);
         }
     }
 }

@@ -10,6 +10,9 @@ public class Walking : FighterState
 
     public override void OnStateEnter()
     {
+        fighter.currentAction = null;
+        fighter.actionHasHit = false;
+        fighter.currentThrow = null;
         fighter.ClearHitboxes();
         fighter.ClearHurtboxes();
         fighter.currentHurtboxes[0].Init(Vector2.zero, fighter.standingHurtbox.Extents * 2f);

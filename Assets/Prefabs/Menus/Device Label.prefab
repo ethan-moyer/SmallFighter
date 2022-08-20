@@ -30,6 +30,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -182,6 +183,26 @@ MonoBehaviour:
     m_ActionId: 51fc17fb-f3a2-47e5-9314-46c35236c3de
     m_ActionName: Gameplay/Jump[/Keyboard/w,/Keyboard/upArrow]
   - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6adf27c6-1be5-40f1-86f4-5ca738743223
+    m_ActionName: Menu/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8f5a65b5-ae68-4b9b-9ccf-70b0add7c870
+    m_ActionName: Menu/Enter[/Keyboard/v,/Keyboard/j]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5c3818e2-c291-4ee3-9e85-7a8866373564
+    m_ActionName: Menu/Cancel[/Keyboard/b,/Keyboard/k]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7752dbc7-1429-4de5-9416-bd9c1fb1ea84
+    m_ActionName: Menu/Point[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1375ed22-148c-4c44-9ca4-9847e50dad25
+    m_ActionName: Menu/Click[/Mouse/leftButton]
+  - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4222758861735537181}
         m_TargetAssemblyTypeName: DeviceLabelController, Assembly-CSharp
@@ -195,8 +216,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: 6adf27c6-1be5-40f1-86f4-5ca738743223
-    m_ActionName: Menu/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+    m_ActionId: 53b4a0dd-9174-4043-bb45-7ab631ba8d1a
+    m_ActionName: DeviceScreen/Move[/DualShock4GamepadHID/leftStick,/DualShock4GamepadHID/dpad,/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4222758861735537181}
@@ -211,15 +232,27 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: 8f5a65b5-ae68-4b9b-9ccf-70b0add7c870
-    m_ActionName: Menu/Enter[/Keyboard/v,/Keyboard/j]
+    m_ActionId: e18bdb48-37db-44ca-b54f-e5ae23f7c75c
+    m_ActionName: DeviceScreen/Enter[/DualShock4GamepadHID/buttonSouth,/Keyboard/v,/Keyboard/j]
   - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 5c3818e2-c291-4ee3-9e85-7a8866373564
-    m_ActionName: Menu/Cancel[/Keyboard/b,/Keyboard/k]
+      m_Calls:
+      - m_Target: {fileID: 4222758861735537181}
+        m_TargetAssemblyTypeName: DeviceLabelController, Assembly-CSharp
+        m_MethodName: OnCancel
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: ba322d09-cb8e-48cc-93f5-2580062e6a96
+    m_ActionName: DeviceScreen/Cancel[/DualShock4GamepadHID/buttonEast,/Keyboard/b,/Keyboard/k]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
-  m_DefaultActionMap: Menu
+  m_DefaultActionMap: ec023fcf-e31d-4aba-824d-024e2331f680
   m_SplitScreenIndex: 0
   m_Camera: {fileID: 0}
 --- !u!114 &4222758861735537181
@@ -237,4 +270,11 @@ MonoBehaviour:
   MoveLabel:
     m_PersistentCalls:
       m_Calls: []
+  PressedEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  PressedCancel:
+    m_PersistentCalls:
+      m_Calls: []
+  controlScheme: 
   initialPosition: {x: 0, y: 0, z: 0}
