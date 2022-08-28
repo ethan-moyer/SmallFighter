@@ -112,6 +112,7 @@ public class FightManager : MonoBehaviour
                 roundsWon[0] += 1;
                 roundNum += 1;
                 UpdateRoundIcons();
+                StopAllCoroutines();
                 StartCoroutine(EndRound("K.O."));
             }
             else if (fighters[0].currentHealth <= 0 && fighters[1].currentHealth > 0)
@@ -119,6 +120,7 @@ public class FightManager : MonoBehaviour
                 roundsWon[1] += 1;
                 roundNum += 1;
                 UpdateRoundIcons();
+                StopAllCoroutines();
                 StartCoroutine(EndRound("K.O."));
             }
             else if (fighters[0].currentHealth <= 0 && fighters[1].currentHealth <= 0)
@@ -127,6 +129,7 @@ public class FightManager : MonoBehaviour
                 roundsWon[1] += 1;
                 roundNum += 1;
                 UpdateRoundIcons();
+                StopAllCoroutines();
                 StartCoroutine(EndRound("K.O."));
             }
         }
@@ -219,8 +222,6 @@ public class FightManager : MonoBehaviour
 
     private IEnumerator EndRound(string text)
     {
-        if (timerCoroutine != null)
-            StopCoroutine(timerCoroutine);
         roundOver = true;
 
         for (int i = 0; i < 4; i++)
