@@ -18,6 +18,7 @@ public class SettingsMenu : MonoBehaviour
 
         List<string> resolutionStrings = new List<string>();
         int currentResolutionIndex = 0;
+        int targetResolutionIndex = -1;
         for (int i = 0; i < resolutions.Length; i++)
         {
             string resolutionString = $"{resolutions[i].width}x{resolutions[i].height}";
@@ -27,6 +28,11 @@ public class SettingsMenu : MonoBehaviour
             {
                 currentResolutionIndex = i;
             }
+
+            if (resolutions[i].width == 1280 && resolutions[i].height == 720)
+            {
+                targetResolutionIndex = i;
+            }
         }
         resolutionsDropdown.AddOptions(resolutionStrings);
 
@@ -34,6 +40,10 @@ public class SettingsMenu : MonoBehaviour
         {
             int index = PlayerPrefs.GetInt("Resolution");
             OnChangeResolution(index);
+        }
+        else if (targetResolutionIndex != 0)
+        {
+            OnChangeResolution(targetResolutionIndex);
         }
         else
         {

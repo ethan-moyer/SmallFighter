@@ -63,6 +63,10 @@ public class FightManager : MonoBehaviour
             instance = this;
             Application.targetFrameRate = 60;
 
+            regenCoroutines = new Coroutine[2];
+            roundsWon = new int[2];
+            roundNum = 1;
+
             if (FightLoader.instance != null)
             {
                 fighters[0] = Instantiate(FightLoader.instance.fighterPrefabs[0]).GetComponent<NewFighter>();
@@ -82,15 +86,6 @@ public class FightManager : MonoBehaviour
         {
             fighter.BreakThrow.AddListener(OnBreakThrow);
             fighter.TookDamage.AddListener(OnTookDamage);
-        }
-
-        regenCoroutines = new Coroutine[2];
-        roundsWon = new int[2];
-        roundNum = 1;
-
-        if (!trainingMode)
-        {
-            StartCoroutine(StartRound());
         }
     }
 
@@ -137,6 +132,7 @@ public class FightManager : MonoBehaviour
 
     private void UpdateRoundIcons()
     {
+        print("Update rounds");
         if (roundsWon[0] == 1)
         {
             fighterRoundIcons[0].SetActive(true);
