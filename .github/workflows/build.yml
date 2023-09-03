@@ -50,6 +50,7 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
 
       - name: Deploy Pages 🚀
+      - if: matrix.targetPlatform == 'WebGL'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: build/${{ matrix.targetPlatform }}/WebGL # The folder the action should deploy.
