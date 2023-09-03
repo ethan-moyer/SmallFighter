@@ -49,7 +49,6 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
 
-      - if: matrix.targetPlatform == 'WebGL'
       - name: Deploy Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
