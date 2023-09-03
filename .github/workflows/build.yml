@@ -21,6 +21,8 @@ jobs:
           - 2022.3.8f1
         targetPlatform:
           - WebGL
+          - StandaloneLinux64
+          - StandaloneWindows
     steps:
 
       # Checkout
@@ -47,7 +49,14 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
 
-      - name: Deploy 🚀
+      - if: matrix.targetPlatform == 'WebGL'
+      - name: Deploy Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build/${{ matrix.targetPlatform }}/WebGL # The folder the action should deploy.          
+          folder: build/${{ matrix.targetPlatform }}/WebGL # The folder the action should deploy.
+
+      - name: Deploy Artifact
+        uses: actions/upload-artifact@v3
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
+      
