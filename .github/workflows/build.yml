@@ -69,7 +69,7 @@ jobs:
 
       - name: List Files
         run: |
-          ls -lha build
+          ls -lha build/${{ matrix.targetPlatform }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
