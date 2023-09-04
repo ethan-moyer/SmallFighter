@@ -11,7 +11,7 @@ on:
   
 jobs:
   build:
-    name: Build - ${{ matrix.targetPlatform }} - Unity ver. ${{ matrix.unityVersion }}
+    name: Build - ${{ matrix.targetPlatform }} - Unity ${{ matrix.unityVersion }}
     runs-on: ubuntu-latest
     environment: Unity build
     strategy:
