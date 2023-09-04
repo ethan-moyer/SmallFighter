@@ -62,20 +62,20 @@ jobs:
           path: build/${{ matrix.targetPlatform }}
 
       # Release    
-      - name: Create Folder
+      - name: Create Release Folder
         run: |
-          mkdir -p download
+          mkdir -p ${{ matrix.targetPlatform }}
 
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
           name: Build-${{ matrix.targetPlatform }}
-          path: download
+          path: ${{ matrix.targetPlatform }}
 
-      - name: List Files
+      - name: Zip Files
         run: |
           ls -lha
-          zip -r ${{ matrix.targetPlatform }}.zip download
+          zip -r ${{ matrix.targetPlatform }}.zip ${{ matrix.targetPlatform }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
