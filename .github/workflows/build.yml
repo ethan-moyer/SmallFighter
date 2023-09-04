@@ -64,7 +64,6 @@ jobs:
 
       # Release    
       - name: Create Release Folder
-        if: matrix.targetPlatform != 'WebGL'
         run: |
           mkdir -p ${{ matrix.targetPlatform }}
 
