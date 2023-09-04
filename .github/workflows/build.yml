@@ -64,9 +64,13 @@ jobs:
 
       # Release    
       - name: Create Release Folder
-        if: matrix.targetPlatform != 'WebGL'
         run: |
-          mkdir -p ${{ matrix.targetPlatform }}
+          if [ "${{ matrix.targetPlatform }}" == "WebGL" ]
+          then
+              echo "Skipping WebGL"
+          else
+              mkdir -p ${{ matrix.targetPlatform }}
+          fi
 
       - name: Download Artifacts
         uses: actions/download-artifact@v3
