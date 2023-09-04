@@ -65,7 +65,7 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
-          path: build/${{ matrix.targetPlatform }}
+          name: Build-${{ matrix.targetPlatform }}
 
       - name: List Files
         run: |
