@@ -61,13 +61,22 @@ jobs:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
 
+      # Release    
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: build/${{ matrix.targetPlatform }}
+
+      - name: List Files
+        run: |
+          ls build
+
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           # Identify if this is a pre release by checking if the tag name contains -rc, -b, -a
           # prerelease: ${{ contains(github.ref, '-rc') || contains(github.ref, '-b') || contains(github.ref, '-a') }}
-          files: ${{ github.workspace }}/build/${{ matrix.targetPlatform }}/*
+          files: build/${{ matrix.targetPlatform }}/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
