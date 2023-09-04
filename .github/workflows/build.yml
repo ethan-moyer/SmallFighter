@@ -23,6 +23,7 @@ jobs:
           - WebGL
           - StandaloneLinux64
           - StandaloneWindows
+          - StandaloneOSX
     steps:
 
       # Checkout
@@ -63,6 +64,7 @@ jobs:
 
       # Release    
       - name: Create Release Folder
+        if: matrix.targetPlatform != 'WebGL'
         run: |
           mkdir -p ${{ matrix.targetPlatform }}
 
