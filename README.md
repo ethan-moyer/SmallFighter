@@ -1,4 +1,4 @@
-[![Build](https://github.com/humbertodias/unity-small-fighter/actions/workflows/main.yml/badge.svg)](https://github.com/humbertodias/unity-small-fighter/actions/workflows/main.yml)
+[![Build](https://github.com/humbertodias/unity-small-fighter/actions/workflows/main.yml/badge.svg)](https://github.com/humbertodias/unity-small-fighter/actions/workflows/build.yml)
 
 
 # Small Fighter
